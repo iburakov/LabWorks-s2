@@ -41,11 +41,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLine\IO.cs" />
+    <Compile Include="Contact.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="LocalStorage.cs" />
+    <Compile Include="IStorage.cs" />
+    <Compile Include="CommandLine\Menu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="tasks1.pdf" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
