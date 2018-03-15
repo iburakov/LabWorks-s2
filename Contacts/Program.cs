@@ -4,6 +4,10 @@ using Contacts.CommandLine;
 
 namespace Contacts {
 
+    // TODO: Use string interpolation
+    // TODO: The Single Responsibility Principle check and SOLID principles
+    // TODO: Check out some design pattens 
+
     public sealed class Program { 
 
         private static Menu NewMainMenu(Menu searchMenu, IStorage storage) {
