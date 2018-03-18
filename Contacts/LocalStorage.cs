@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Contacts {
 
-    public class LocalStorage : IStorage {
+    public class LocalStorage : IContactsStorage {
         private List<Contact> contacts = new List<Contact>();
 
         public void Add(Contact newContact) => contacts.Add(newContact);

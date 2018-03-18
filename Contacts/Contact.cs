@@ -1,22 +1,25 @@
 ﻿using System;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
 
 namespace Contacts {
     public class Contact {
-        private static Int16 MaxFirstNameLength = 16;
-        private static Int16 MaxLastNameLength = 36;
-        private static Int16 MinPhoneLength = 3;
+        private const short MaxFirstNameLength = 16;
+        private const short MaxLastNameLength = 36;
+        private const short MinPhoneLength = 3;
 
-        public delegate Boolean FieldValidator(String value, out String errorMessage);
+        public delegate bool FieldValidator(string value, out string errorMessage);
 
-        private static Boolean NameValid(String nameKind, String value, out String errorMessage) {
+        private enum ContactNameKind { First, Last };
+
+        private static bool NameValid(ContactNameKind nameKind, string value, out string errorMessage) {
             if (value.Length == 0) {
-                errorMessage = nameKind + " name can't be empty";
+                errorMessage = $"{nameKind} name can't be empty";
                 return false;
             }
 
-            if (value.Length > ((nameKind == "First") ? MaxFirstNameLength : MaxLastNameLength)) {
-                errorMessage = nameKind + " name is too long";
+            if (value.Length > ((nameKind == ContactNameKind.First) ? MaxFirstNameLength : MaxLastNameLength)) {
+                errorMessage = $"{nameKind} name is too long";
                 return false;
             } else {
                 errorMessage = null;
@@ -24,19 +27,19 @@ namespace Contacts {
             }
         }
 
-        public static Boolean FirstNameValid(String value, out String errorMessage) {
-            return NameValid("First", value, out errorMessage);
+        public static bool IsFirstNameValid(string value, out string errorMessage) {
+            return NameValid(ContactNameKind.First, value, out errorMessage);
         }
 
-        public static Boolean LastNameValid(String value, out String errorMessage) {
-            return NameValid("Last", value, out errorMessage);
+        public static bool IsLastNameValid(string value, out string errorMessage) {
+            return NameValid(ContactNameKind.Last, value, out errorMessage);
         }
 
-        private String firstName;
-        public String FirstName {
+        private string firstName;
+        public string FirstName {
             get => firstName;
             set {
-                if (FirstNameValid(value, out String errorMessage)) {
+                if (IsFirstNameValid(value, out string errorMessage)) {
                     firstName = value;
                 } else {
                     throw new ArgumentException(errorMessage);
@@ -44,11 +47,11 @@ namespace Contacts {
             }
         }
 
-        private String lastName;
-        public String LastName {
+        private string lastName;
+        public string LastName {
             get => lastName;
             set {
-                if (LastNameValid(value, out String errorMessage)) {
+                if (IsLastNameValid(value, out string errorMessage)) {
                     lastName = value;
                 } else {
                     throw new ArgumentException(errorMessage);
@@ -56,18 +59,18 @@ namespace Contacts {
             }
         }
 
-        public static String NormalizePhone(String phone) {
+        public static string NormalizePhone(string phone) {
             return Regex.Replace(phone, @"[\-() ]", ""); ;
         }
 
-        public static Boolean PhoneValid(String value, out String errorMessage) {
+        public static bool IsPhoneValid(string value, out string errorMessage) {
             if (value.Length < MinPhoneLength) {
                 errorMessage = "Phone is too short";
                 return false;
             }
-            
-            Boolean allCharsAreDigits = true;
-            foreach (Char c in Regex.Replace(value, @"[\-+() ]", "").ToCharArray()) {
+
+            bool allCharsAreDigits = true;
+            foreach (Char c in Regex.Replace(value, @"[\-+() ]", "")) {
                 if (!Char.IsDigit(c)) {
                     allCharsAreDigits = false;
                     break;
@@ -83,12 +86,12 @@ namespace Contacts {
             return true;
         }
 
-        private String phone;
-        public String NormalizedPhone{ get => NormalizePhone(phone); }
-        public String Phone {
+        private string phone;
+        public string NormalizedPhone { get => NormalizePhone(phone); }
+        public string Phone {
             get => phone;
             set {
-                if (PhoneValid(value, out String errorMessage)) {
+                if (IsPhoneValid(value, out string errorMessage)) {
                     phone = value;
                 } else {
                     throw new ArgumentException(errorMessage);
@@ -96,9 +99,9 @@ namespace Contacts {
             }
         }
 
-        public static Boolean EmailValid(String value, out String errorMessage) {
+        public static bool IsEmailValid(string value, out string errorMessage) {
             try {
-                var parsed = new System.Net.Mail.MailAddress(value);
+                var parsed = new MailAddress(value);
                 if (parsed.Address == value) {
                     errorMessage = null;
                     return true;
@@ -112,11 +115,11 @@ namespace Contacts {
             }
         }
 
-        private String email;
-        public String Email {
+        private string email;
+        public string Email {
             get => email;
             set {
-                if (EmailValid(value, out String errorMessage)) {
+                if (IsEmailValid(value, out string errorMessage)) {
                     email = value;
                 } else {
                     throw new ArgumentException(errorMessage);
@@ -124,26 +127,15 @@ namespace Contacts {
             }
         }
 
-        public Contact(String firstName = null, String lastName = null, String phone = null, String email = null) {
-            if (firstName != null) {
-                FirstName = firstName;
-            }
-
-            if (lastName != null) {
-                LastName = lastName;
-            }
-
-            if (phone != null) {
-                Phone = phone;
-            }
-
-            if (email != null) {
-                Email = email;
-            }
+        public Contact(string firstName = null, string lastName = null, string phone = null, string email = null) {
+            FirstName = firstName;
+            LastName = lastName;
+            Phone = phone;
+            Email = email;
         }
 
-        public override String ToString() {
-            return String.Format("{0} {1}, tel: {2}, email: {3}", FirstName, LastName, Phone, Email);
+        public override string ToString() {
+            return $"{FirstName} {LastName}, tel: {Phone}, email: {Email}";
         }
     }
 }
