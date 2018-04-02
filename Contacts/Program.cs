@@ -10,10 +10,10 @@ namespace Contacts {
         private static Menu NewMainMenu(Menu searchMenu, IContactsStorage storage) {
             var mainMenu = new Menu("Menu:");
             mainMenu.AddItem(new MenuItem("View all contacts", () => {
-                IO.PrintContactList("All contacts", storage.FindAll(contact => true));
+                IO.PrintContactList("All contacts", storage.GetAllContacts());
             }));
 
-            mainMenu.AddItem(new MenuItem("Search", searchMenu.Deploy));
+            mainMenu.AddItem(new MenuItem("Search", searchMenu.Invoke));
 
             mainMenu.AddItem(new MenuItem("New contact", () => storage.Add(IO.GetContact())));
 
@@ -30,7 +30,7 @@ namespace Contacts {
 
                 IO.PrintContactList(
                     searchResultsHeader,
-                    storage.FindAll(contact => contact.FirstName.Contains(substring))
+                    storage.FindByFirstName(substring)
                 );
             }));
 
@@ -39,7 +39,7 @@ namespace Contacts {
 
                 IO.PrintContactList(
                     searchResultsHeader,
-                    storage.FindAll(contact => contact.LastName.Contains(substring))
+                    storage.FindByLastName(substring)
                 );
             }));
            
@@ -48,8 +48,7 @@ namespace Contacts {
 
                 IO.PrintContactList(
                     searchResultsHeader,
-                    storage.FindAll(contact => (contact.FirstName + " " + contact.LastName)
-                                               .Contains(substring))
+                    storage.FindByFullName(substring)
                 );
             }));
 
@@ -58,9 +57,7 @@ namespace Contacts {
 
                 IO.PrintContactList(
                     searchResultsHeader,
-                    storage.FindAll(contact => {
-                        return contact.NormalizedPhone.Contains(substring);
-                    })
+                    storage.FindByPhone(substring)
                 );
             }));
 
@@ -69,7 +66,7 @@ namespace Contacts {
 
                 IO.PrintContactList(
                     searchResultsHeader,
-                    storage.FindAll(contact => contact.Email.Contains(substring))
+                    storage.FindByEmail(substring)
                 );
             }));
 
@@ -77,7 +74,7 @@ namespace Contacts {
         }
 
         public static void Main(string[] args) {
-            var localStorage = new LocalStorage();
+            var localStorage = new LocalContactsStorage();
 
             Menu searchMenu = NewSearchMenu(localStorage);
             Menu mainMenu = NewMainMenu(searchMenu, localStorage);
@@ -88,7 +85,7 @@ namespace Contacts {
             Console.WriteLine("Enter the number of action and press [Enter]. Then follow instructions.");
             while (!needsExit) {
                 try {
-                    mainMenu.Deploy();
+                    mainMenu.Invoke();
                 }
                 catch (UserRefusedException) {
                     continue;

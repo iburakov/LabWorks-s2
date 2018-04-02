@@ -17,8 +17,8 @@ namespace Contacts.CommandLine {
         private string _title;
         private List<MenuItem> menuItems = new List<MenuItem>();
 
-        public Menu(string title = null) {
-            _title = title ?? "";
+        public Menu(string title = "") {
+            _title = title;
         }
 
         public void AddItem(MenuItem newItem) => menuItems.Add(newItem);
@@ -30,7 +30,7 @@ namespace Contacts.CommandLine {
             }
         }
 
-        public void Deploy() {
+        public void Invoke() {
             Display();
 
             bool gotIndex = false;

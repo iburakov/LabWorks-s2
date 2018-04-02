@@ -12,7 +12,7 @@ namespace Contacts {
 
         private enum ContactNameKind { First, Last };
 
-        private static bool NameValid(ContactNameKind nameKind, string value, out string errorMessage) {
+        private static bool IsNameValid(ContactNameKind nameKind, string value, out string errorMessage) {
             if (value.Length == 0) {
                 errorMessage = $"{nameKind} name can't be empty";
                 return false;
@@ -28,11 +28,11 @@ namespace Contacts {
         }
 
         public static bool IsFirstNameValid(string value, out string errorMessage) {
-            return NameValid(ContactNameKind.First, value, out errorMessage);
+            return IsNameValid(ContactNameKind.First, value, out errorMessage);
         }
 
         public static bool IsLastNameValid(string value, out string errorMessage) {
-            return NameValid(ContactNameKind.Last, value, out errorMessage);
+            return IsNameValid(ContactNameKind.Last, value, out errorMessage);
         }
 
         private string firstName;
@@ -70,7 +70,7 @@ namespace Contacts {
             }
 
             bool allCharsAreDigits = true;
-            foreach (Char c in Regex.Replace(value, @"[\-+() ]", "")) {
+            foreach (Char c in Regex.Replace(value, @"[\-+()\s]", "")) {
                 if (!Char.IsDigit(c)) {
                     allCharsAreDigits = false;
                     break;

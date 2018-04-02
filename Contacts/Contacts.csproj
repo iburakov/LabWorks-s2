@@ -44,7 +44,7 @@
     <Compile Include="CommandLine\IO.cs" />
     <Compile Include="Contact.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="LocalStorage.cs" />
+    <Compile Include="LocalContactsStorage.cs" />
     <Compile Include="IContactsStorage.cs" />
     <Compile Include="CommandLine\Menu.cs" />
     <Compile Include="Program.cs" />

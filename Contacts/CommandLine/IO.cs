@@ -31,13 +31,13 @@ namespace Contacts.CommandLine {
             );
         }
 
-        private static string GetField(string fieldKind, Contact.FieldValidator validate) {
+        private static string GetField(string fieldKind, Contact.FieldValidator validator) {
             bool gotString = false;
             while (!gotString) {
                 Console.Write("Enter {0}: ", fieldKind);
                 string newField = Console.ReadLine();
 
-                if (!validate(newField, out string errorMessage)) {
+                if (!validator.Invoke(newField, out string errorMessage)) {
                     Console.WriteLine($"{errorMessage}. Try again?");
                     if (GetBoolean()) {
                         break;
