@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace Contacts {
 
@@ -31,6 +33,10 @@ namespace Contacts {
 
         public List<Contact> GetAllContacts() {
             return new List<Contact>(contacts);
+        }
+
+        public void SaveToFile(string filename) {
+            File.WriteAllText(filename, String.Join("\n\n", contacts.ConvertAll(contact => contact.ToVCard())));
         }
     }
 

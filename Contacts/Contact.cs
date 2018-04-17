@@ -137,5 +137,9 @@ namespace Contacts {
         public override string ToString() {
             return $"{FirstName} {LastName}, tel: {Phone}, email: {Email}";
         }
+
+        public string ToVCard() {
+            throw new NotImplementedException();
+        }
     }
 }
