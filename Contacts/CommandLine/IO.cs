@@ -31,7 +31,7 @@ namespace Contacts.CommandLine {
             );
         }
 
-        private static string GetField(string fieldKind, Contact.FieldValidator validator) {
+        private static string GetField(string fieldKind, Contact.FieldValidator<string> validator) {
             bool gotString = false;
             while (!gotString) {
                 Console.Write("Enter {0}: ", fieldKind);
