@@ -60,7 +60,7 @@ namespace Contacts {
         }
 
         public static string NormalizePhone(string phone) {
-            return Regex.Replace(phone, @"[\-() ]", ""); ;
+            return Regex.Replace(phone, @"[\-()\s]", ""); ;
         }
 
         public static bool IsPhoneValid(string value, out string errorMessage) {
