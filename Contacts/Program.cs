@@ -3,8 +3,9 @@ using Contacts.CommandLine;
 
 namespace Contacts {
 
-    // TODO: The Single Responsibility Principle and SOLID principles
-    // TODO: Check out some design pattens
+    // TODO: Setting/searching/displaying new fields thorugh CLI
+    // TODO: Saving to VCard through CLI
+    // TODO: Reading from VCard through CLI
 
     public sealed class Program {
         private static Menu NewMainMenu(Menu searchMenu, IContactsStorage storage) {
