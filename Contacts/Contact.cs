@@ -150,7 +150,7 @@ namespace Contacts {
 
         private string note;
         public string Note {
-            get => mailer;
+            get => note;
             set { ValidateAndSetField(ref note, value, IsNoteValid); }
         }
 
@@ -195,7 +195,7 @@ namespace Contacts {
         }
 
         public override string ToString() {
-            return $"{FirstName} {LastName}, tel: {Phone}, email: {Email}";
+            return $"{FirstName} {nickname} {LastName}, born {Birthday}, tel: {Phone}, email({Mailer}): {Email} - {Note}";
         }
 
         public string ToVCard() {
