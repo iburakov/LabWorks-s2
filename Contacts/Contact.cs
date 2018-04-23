@@ -14,7 +14,7 @@ namespace Contacts {
         public delegate bool FieldValidator<T>(T value, out string errorMessage);
 
         private void ValidateAndSetField<T>(ref T fieldToSet, T value, FieldValidator<T> fieldValidator) {
-            if (fieldValidator(value, out string errorMessage)) {
+            if (fieldValidator.Invoke(value, out string errorMessage)) {
                 fieldToSet = value;
             } else {
                 throw new ArgumentException(errorMessage);
@@ -154,23 +154,48 @@ namespace Contacts {
             set { ValidateAndSetField(ref note, value, IsNoteValid); }
         }
 
-        public DateTime Birthday { get; set; }
+        private DateTime birthday;
+        public string Birthday {
+            get => birthday.ToShortDateString();
+            set {
+                if (IsBirthdayValid(value, out string errorMessage)) {
+                    birthday = DateTime.Parse(value);
+                } else {
+                    throw new ArgumentException(errorMessage);
+                }
+            }
+        }
 
-        public Contact(string firstName = null, string lastName = null, string phone = null, string email = null) {
+        private bool IsBirthdayValid(string value, out string errorMessage) {
+            if (value.Length == 0) {
+                errorMessage = "A contact must have a birthday";
+                return false;
+            }
+
+            try {
+                DateTime.Parse(value);
+                errorMessage = "";
+                return true;
+            } catch (FormatException e) {
+                errorMessage = e.Message;
+                return false;
+            }
+        }
+
+        public Contact(string firstName, string lastName, string nickname, string phone, 
+                       string email, string mailer, string note, string birthday) {
             FirstName = firstName;
             LastName = lastName;
+            Nickname = nickname;
             Phone = phone;
             Email = email;
+            Mailer = mailer;
+            Note = note;
+            Birthday = birthday;
         }
 
         public override string ToString() {
             return $"{FirstName} {LastName}, tel: {Phone}, email: {Email}";
-        }
-
-        private string GetBirthdayStringForVCard() {
-            return " [[ STUB ]] ";
-            // throw new NotImplementedException();
-            // TODO
         }
 
         public string ToVCard() {
@@ -180,7 +205,7 @@ namespace Contacts {
                 FN:{LastName + " " + FirstName}
                 N:{LastName};{FirstName};;;
                 NICKNAME:{Nickname}
-                BDAY:{GetBirthdayStringForVCard()}
+                BDAY:{Birthday}
                 TEL:{Phone}
                 EMAIL:{Email}
                 MAILER:{Mailer}
