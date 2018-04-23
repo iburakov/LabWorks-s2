@@ -64,7 +64,7 @@ namespace Contacts.CommandLine {
             return GetField("last name", Contact.IsLastNameValid);
         }
 
-        private static string GetNickname() {
+        public static string GetNickname() {
             return GetField("nickname", Contact.IsNicknameValid);
         }
 
@@ -76,15 +76,15 @@ namespace Contacts.CommandLine {
             return GetField("email", Contact.IsEmailValid);
         }
 
-        private static string GetMailer() {
+        public static string GetMailer() {
             return GetField("mailer", Contact.IsMailerValid);
         }
 
-        private static string GetNote() {
+        public static string GetNote() {
             return GetField("note", Contact.IsNoteValid);
         }
 
-        private static string GetBirthday() {
+        public static string GetBirthday() {
             return GetField("birthday", Contact.IsBirthdayValid);
         }
 
