@@ -38,6 +38,22 @@ namespace Contacts {
         public void SaveToFile(string filename) {
             File.WriteAllText(filename, String.Join("\n\n", contacts.ConvertAll(contact => contact.ToVCard())));
         }
+
+        public List<Contact> FindByNickname(string substring) {
+            return contacts.FindAll(contact => contact.Nickname.Contains(substring));
+        }
+
+        public List<Contact> FindByMailer(string substring) {
+            return contacts.FindAll(contact => contact.Mailer.Contains(substring));
+        }
+
+        public List<Contact> FindByNote(string substring) {
+            return contacts.FindAll(contact => contact.Note.Contains(substring));
+        }
+
+        public List<Contact> FindByBirthday(string birthday) {
+            return contacts.FindAll(contact => contact.Birthday == birthday);
+        }
     }
 
 }
