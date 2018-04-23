@@ -4,6 +4,13 @@ using Contacts.CommandLine;
 namespace Contacts {
 
     // TODO: Setting/searching/displaying new fields thorugh CLI
+    /* List of new fields:
+     * * Birthday
+     * * Mailer
+     * * Nickname
+     * * Note
+    */
+
     // TODO: Saving to VCard through CLI
     // TODO: Reading from VCard through CLI
 
