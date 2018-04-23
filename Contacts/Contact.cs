@@ -166,7 +166,7 @@ namespace Contacts {
             }
         }
 
-        private bool IsBirthdayValid(string value, out string errorMessage) {
+        public static bool IsBirthdayValid(string value, out string errorMessage) {
             if (value.Length == 0) {
                 errorMessage = "A contact must have a birthday";
                 return false;
