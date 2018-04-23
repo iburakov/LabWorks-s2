@@ -26,8 +26,12 @@ namespace Contacts.CommandLine {
             return new Contact(
                 firstName:  GetFirstName(),
                 lastName:   GetLastName(),
+                nickname:   GetNickname(),
                 phone:      GetPhone(),
-                email:      GetEmail()
+                email:      GetEmail(),
+                mailer:     GetMailer(),
+                note:       GetNote(),
+                birthday:   GetBirthday()
             );
         }
 
@@ -60,12 +64,28 @@ namespace Contacts.CommandLine {
             return GetField("last name", Contact.IsLastNameValid);
         }
 
+        private static string GetNickname() {
+            return GetField("nickname", Contact.IsNicknameValid);
+        }
+
         public static string  GetPhone() {
             return GetField("phone", Contact.IsPhoneValid);
         }
 
         public static string GetEmail() {
             return GetField("email", Contact.IsEmailValid);
+        }
+
+        private static string GetMailer() {
+            return GetField("mailer", Contact.IsMailerValid);
+        }
+
+        private static string GetNote() {
+            return GetField("note", Contact.IsNoteValid);
+        }
+
+        private static string GetBirthday() {
+            return GetField("birthday", Contact.IsBirthdayValid);
         }
 
         public static bool GetBoolean() {
