@@ -85,7 +85,7 @@ namespace Contacts.CommandLine {
         }
 
         public static string GetBirthday() {
-            return GetField("birthday", Contact.IsBirthdayValid);
+            return DateTime.Parse(GetField("birthday", Contact.IsBirthdayValid)).ToShortDateString();
         }
 
         public static bool GetBoolean() {
