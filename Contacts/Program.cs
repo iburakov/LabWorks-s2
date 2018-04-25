@@ -107,7 +107,10 @@ namespace Contacts {
             Menu mainMenu = NewMainMenu(searchMenu, localStorage);
 
             bool needsExit = false;
-            mainMenu.AddItem(new MenuItem("Exit", () => needsExit = true));
+            mainMenu.AddItem(new MenuItem("Exit", () => {
+                Console.WriteLine("Are you sure?");
+                needsExit = IO.GetBoolean(yesByDefault: false);
+            }));
 
             Console.WriteLine("Enter the number of action and press [Enter]. Then follow instructions.");
             while (!needsExit) {
