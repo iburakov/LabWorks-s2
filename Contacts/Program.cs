@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Contacts.CommandLine;
 
 namespace Contacts {
 
-    // TODO: Setting/searching/displaying new fields thorugh CLI
+    // TODODONE: Setting/searching/displaying new fields thorugh CLI
     /* List of new fields:
      * * Birthday
      * * Mailer
@@ -18,6 +19,20 @@ namespace Contacts {
     public sealed class Program {
         private static Menu NewMainMenu(Menu searchMenu, IContactsStorage storage) {
             var mainMenu = new Menu("Menu:");
+
+            mainMenu.AddItem(new MenuItem("Load contacts from VCard", () => {
+                IO.LoadContactsFromVCard(IO.GetString("Filename: "), storage);
+            }));
+
+            mainMenu.AddItem(new MenuItem("Save contacts to VCard", () => {
+                string filename = IO.GetString("Filename: ");
+                if (File.Exists(filename)) {
+                    Console.WriteLine($"File \"{filename}\" already exists. Rewrite?");
+                    if (!IO.GetBoolean(yesByDefault: false)) return;
+                }
+                IO.SaveContactsToVCard(filename, storage);
+            }));
+
             mainMenu.AddItem(new MenuItem("View all contacts", () => {
                 IO.PrintContactList("All contacts", storage.GetAllContacts());
             }));

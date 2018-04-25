@@ -35,10 +35,6 @@ namespace Contacts {
             return new List<Contact>(contacts);
         }
 
-        public void SaveToFile(string filename) {
-            File.WriteAllText(filename, String.Join("\n\n", contacts.ConvertAll(contact => contact.ToVCard())));
-        }
-
         public List<Contact> FindByNickname(string substring) {
             return contacts.FindAll(contact => contact.Nickname.Contains(substring));
         }
@@ -52,8 +48,10 @@ namespace Contacts {
         }
 
         public List<Contact> FindByBirthday(string birthday) {
+            // TODO: optimize with BirthdayRaw
             return contacts.FindAll(contact => contact.Birthday == birthday);
         }
+
     }
 
 }

@@ -1,5 +1,8 @@
-﻿using System;
+﻿using MixERP.Net.VCards;
+using MixERP.Net.VCards.Models;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Contacts.CommandLine {
 
@@ -43,10 +46,10 @@ namespace Contacts.CommandLine {
 
                 if (!validator.Invoke(newField, out string errorMessage)) {
                     Console.WriteLine($"{errorMessage}. Try again?");
-                    if (GetBoolean()) {
-                        break;
-                    } else {
+                    if (GetBoolean(yesByDefault: true)) {
                         continue;
+                    } else {
+                        break;
                     }
                 }
 
@@ -88,9 +91,29 @@ namespace Contacts.CommandLine {
             return DateTime.Parse(GetField("birthday", Contact.IsBirthdayValid)).ToShortDateString();
         }
 
-        public static bool GetBoolean() {
-            Console.WriteLine("[\"no\"/anything else]");
-            return Console.ReadLine().Trim(' ', '\n', '\t') == "no";
+        public static bool GetBoolean(bool yesByDefault) {
+            Console.WriteLine((yesByDefault) ? "[Y/n]" : "[y/N]");
+
+            bool? parseResult = null;
+            var yesOptions = new List<string> { "y", "ye", "yes" };
+            var noOptions = new List<string> { "n", "no" };
+
+            while (parseResult is null) {
+                string input = Console.ReadLine().Trim(' ', '\n', '\t').ToLower();
+
+                if (input == String.Empty) {
+                    return yesByDefault;
+                }
+
+                if (yesOptions.Contains(input)) {
+                    parseResult = true;
+                } else if (noOptions.Contains(input)) {
+                    parseResult = false;
+                }
+            };
+
+            return (bool)parseResult;
+            
         }
 
         public static string GetString(string header = "String: ") {
@@ -101,10 +124,10 @@ namespace Contacts.CommandLine {
 
                 if (String.IsNullOrWhiteSpace(newString)) {
                     Console.WriteLine("Empty strings are not allowed here. Try again?");
-                    if (GetBoolean()) {
-                        break;
-                    } else {
+                    if (GetBoolean(yesByDefault: true)) {
                         continue;
+                    } else {
+                        break;
                     }
                 }
 
@@ -124,10 +147,10 @@ namespace Contacts.CommandLine {
                 if (!Int16.TryParse(newNumberStr, out short newNumber)) {
                     if (askAgain) {
                         Console.WriteLine("Incorrect number. Try again?");
-                        if (GetBoolean()) {
-                            break;
-                        } else {
+                        if (GetBoolean(yesByDefault: true)) {
                             continue;
+                        } else {
+                            break;
                         }
                     } else {
                         Console.WriteLine("Incorrect number.");
@@ -140,6 +163,65 @@ namespace Contacts.CommandLine {
             }
 
             throw new UserRefusedException();
+        }
+
+        public static void LoadContactsFromVCard(string filename, IContactsStorage storage) {
+            if (!File.Exists(filename)) {
+                Console.WriteLine($"File \"{filename}\" doesn't exist!");
+                return;
+            }
+
+            // github.com/mixerp/MixERP.Net.VCards is licensed under the Apache License 2.0 - private use is allowed
+            IEnumerable<VCard> vcards = Deserializer.Deserialize(filename);
+
+            int addedCounter = 0, totalCounter = 0;
+            foreach (var vcard in vcards) {
+                try {
+                    ++totalCounter;
+
+                    var telephones = new List<Telephone>(vcard.Telephones);
+                    var emails = new List<Email>(vcard.Emails);
+
+                    storage.Add(new Contact(
+                        firstName: vcard.FirstName,
+                        lastName: vcard.LastName,
+                        nickname: vcard.NickName,
+                        phone: telephones[0].Number,
+                        email: emails[0].EmailAddress,
+                        mailer: vcard.Mailer,
+                        note: vcard.Note,
+                        birthday: vcard.BirthDay?.ToShortDateString()
+                    ));
+                    ++addedCounter;
+                } catch (Exception e) when (
+                    e is NullReferenceException ||
+                    e is ArgumentException
+                ) {
+                    Console.WriteLine($"Error! Corrupted contact ({e.GetType()}: {e.Message})");
+                }
+                
+            }
+
+            string s = (totalCounter == 1) ? "" : "s";
+            string were = (addedCounter == 1) ? "was" : "were";
+            Console.WriteLine($"{addedCounter} out of {totalCounter} contact{s} {were} loaded.");
+        }
+
+        public static void SaveContactsToVCard(string filename, IContactsStorage storage) {
+            try {
+                File.WriteAllText(filename, String.Join("\n\n", storage.GetAllContacts().ConvertAll(contact => contact.ToVCard())));
+                Console.WriteLine("Done.");
+            } catch (Exception e) when (
+                e is ArgumentException ||
+                e is PathTooLongException ||
+                e is DirectoryNotFoundException ||
+                e is IOException ||
+                e is UnauthorizedAccessException ||
+                e is NotSupportedException
+            ) {
+                Console.WriteLine($"Error! {e.Message}");
+            }
+            
         }
     }
 }
