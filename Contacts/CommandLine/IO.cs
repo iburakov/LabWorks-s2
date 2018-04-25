@@ -110,6 +110,8 @@ namespace Contacts.CommandLine {
                 } else if (noOptions.Contains(input)) {
                     parseResult = false;
                 }
+
+                Console.WriteLine("Try again:");
             };
 
             return (bool)parseResult;
