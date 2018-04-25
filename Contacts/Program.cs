@@ -95,6 +95,8 @@ namespace Contacts {
                 );
             }));
 
+            searchMenu.AddItem(new MenuItem("Back", () => { return; }));
+
             return searchMenu;
         }
 
