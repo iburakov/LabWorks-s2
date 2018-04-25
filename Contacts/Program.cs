@@ -9,6 +9,14 @@ namespace Contacts {
         private static Menu NewMainMenu(Menu searchMenu, IContactsStorage storage) {
             var mainMenu = new Menu("Menu:");
 
+            mainMenu.AddItem(new MenuItem("View all contacts", () => {
+                IO.PrintContactList("All contacts", storage.GetAllContacts());
+            }));
+
+            mainMenu.AddItem(new MenuItem("Search", searchMenu.Invoke));
+
+            mainMenu.AddItem(new MenuItem("New contact", () => storage.Add(IO.GetContact())));
+
             mainMenu.AddItem(new MenuItem("Load contacts from VCard", () => {
                 IO.LoadContactsFromVCard(IO.GetString("Filename: "), storage);
             }));
@@ -21,14 +29,6 @@ namespace Contacts {
                 }
                 IO.SaveContactsToVCard(filename, storage);
             }));
-
-            mainMenu.AddItem(new MenuItem("View all contacts", () => {
-                IO.PrintContactList("All contacts", storage.GetAllContacts());
-            }));
-
-            mainMenu.AddItem(new MenuItem("Search", searchMenu.Invoke));
-
-            mainMenu.AddItem(new MenuItem("New contact", () => storage.Add(IO.GetContact())));
 
             return mainMenu;
         }
