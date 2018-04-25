@@ -24,7 +24,7 @@ namespace Contacts {
         private enum FieldKind { FirstName, LastName, Nickname, Mailer, Note };
 
         private static bool IsFieldValid(FieldKind fieldKind, string value, out string errorMessage) {
-            if (value.Length == 0) {
+            if ((value is null) || (value.Length == 0)) {
                 errorMessage = $"{fieldKind} can't be empty";
                 return false;
             }
@@ -165,6 +165,7 @@ namespace Contacts {
                 }
             }
         }
+        public DateTime BirthdayRaw { get => birthday; }
 
         public static bool IsBirthdayValid(string value, out string errorMessage) {
             if (value.Length == 0) {
@@ -199,19 +200,20 @@ namespace Contacts {
         }
 
         public string ToVCard() {
-            return 
-                $@"BEGIN:VCARD
-                VERSION:4.0
-                FN:{LastName + " " + FirstName}
-                N:{LastName};{FirstName};;;
-                NICKNAME:{Nickname}
-                BDAY:{Birthday}
-                TEL:{Phone}
-                EMAIL:{Email}
-                MAILER:{Mailer}
-                NOTE:{Note}
-                END:VCARD
-                ";
+            return
+$@"
+BEGIN:VCARD
+VERSION:4.0
+FN:{LastName + " " + FirstName}
+N:{LastName};{FirstName};;;
+NICKNAME:{Nickname}
+BDAY:{BirthdayRaw.ToString("yyyy-MM-dd")}
+TEL:{Phone}
+EMAIL:{Email}
+MAILER:{Mailer}
+NOTE:{Note}
+END:VCARD
+";
         }
     }
 }
