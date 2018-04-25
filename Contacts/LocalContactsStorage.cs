@@ -48,7 +48,6 @@ namespace Contacts {
         }
 
         public List<Contact> FindByBirthday(string birthday) {
-            // TODO: optimize with BirthdayRaw
             return contacts.FindAll(contact => contact.Birthday == birthday);
         }
 

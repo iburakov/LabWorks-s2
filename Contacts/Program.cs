@@ -5,17 +5,6 @@ using Contacts.CommandLine;
 
 namespace Contacts {
 
-    // TODODONE: Setting/searching/displaying new fields thorugh CLI
-    /* List of new fields:
-     * * Birthday
-     * * Mailer
-     * * Nickname
-     * * Note
-    */
-
-    // TODO: Saving to VCard through CLI
-    // TODO: Reading from VCard through CLI
-
     public sealed class Program {
         private static Menu NewMainMenu(Menu searchMenu, IContactsStorage storage) {
             var mainMenu = new Menu("Menu:");
