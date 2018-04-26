@@ -92,7 +92,8 @@ namespace Contacts.CommandLine {
         }
 
         public static bool GetBoolean(bool yesByDefault) {
-            Console.WriteLine((yesByDefault) ? "[Y/n]" : "[y/N]");
+            string options = (yesByDefault) ? "[Y/n]" : "[y/N]";
+            Console.WriteLine(options);
 
             bool? parseResult = null;
             var yesOptions = new List<string> { "y", "ye", "yes" };
@@ -109,9 +110,9 @@ namespace Contacts.CommandLine {
                     parseResult = true;
                 } else if (noOptions.Contains(input)) {
                     parseResult = false;
+                } else {
+                    Console.WriteLine($"Try again {options}:");
                 }
-
-                Console.WriteLine("Try again:");
             };
 
             return (bool)parseResult;
@@ -119,24 +120,22 @@ namespace Contacts.CommandLine {
         }
 
         public static string GetString(string header = "String: ") {
-            bool gotString = false;
-            while (!gotString) {
-                Console.Write(header);
-                string newString = Console.ReadLine();
+            string answer = null;
 
-                if (String.IsNullOrWhiteSpace(newString)) {
+            do {
+                Console.Write(header);
+                answer = Console.ReadLine();
+
+                if (answer == String.Empty) {
                     Console.WriteLine("Empty strings are not allowed here. Try again?");
-                    if (GetBoolean(yesByDefault: true)) {
-                        continue;
-                    } else {
-                        break;
+                    if (GetBoolean(yesByDefault: true) == false) {
+                        throw new UserRefusedException();
                     }
                 }
 
-                return newString;
-            }
+            } while (answer is null);
 
-            throw new UserRefusedException();
+            return answer;
         }
 
         public static short GetInt16(string header = "Number: ", bool askAgain = true) {
