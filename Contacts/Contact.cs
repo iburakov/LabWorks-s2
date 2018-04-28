@@ -39,13 +39,11 @@ namespace Contacts {
                 default: maxFieldLength = short.MaxValue; break;
             }
 
-            if (value.Length > maxFieldLength) {
-                errorMessage = $"{fieldKind} is too long";
-                return false;
-            } else {
-                errorMessage = null;
-                return true;
-            }
+            var isLengthValid = value.Length <= maxFieldLength;
+
+            errorMessage = isLengthValid ? string.Empty : $"{fieldKind} is too long";
+
+            return isLengthValid;
         }
 
         public static bool IsFirstNameValid(string value, out string errorMessage) {
@@ -63,19 +61,25 @@ namespace Contacts {
         private string firstName;
         public string FirstName {
             get => firstName;
-            set { ValidateAndSetField(ref firstName, value, IsFirstNameValid); }
+            set {
+                ValidateAndSetField(ref firstName, value, IsFirstNameValid);
+            }
         }
 
         private string lastName;
         public string LastName {
             get => lastName;
-            set { ValidateAndSetField(ref lastName, value, IsLastNameValid); }
+            set {
+                ValidateAndSetField(ref lastName, value, IsLastNameValid);
+            }
         }
 
         private string nickname;
         public string Nickname {
             get => nickname;
-            set { ValidateAndSetField(ref nickname, value, IsNicknameValid); }
+            set {
+                ValidateAndSetField(ref nickname, value, IsNicknameValid);
+            }
         }
 
         public static string NormalizePhone(string phone) {
@@ -89,7 +93,7 @@ namespace Contacts {
             }
 
             bool allCharsAreDigits = true;
-            foreach (Char c in Regex.Replace(value, @"[\-+()\s]", "")) {
+            foreach (char c in Regex.Replace(value, @"[\-+()\s]", "")) {
                 if (!Char.IsDigit(c)) {
                     allCharsAreDigits = false;
                     break;
@@ -109,7 +113,9 @@ namespace Contacts {
         public string NormalizedPhone { get => NormalizePhone(phone); }
         public string Phone {
             get => phone;
-            set { ValidateAndSetField(ref phone, value, IsPhoneValid); }
+            set {
+                ValidateAndSetField(ref phone, value, IsPhoneValid);
+            }
         }
 
         public static bool IsEmailValid(string value, out string errorMessage) {
@@ -131,7 +137,9 @@ namespace Contacts {
         private string email;
         public string Email {
             get => email;
-            set { ValidateAndSetField(ref email, value, IsEmailValid); }
+            set {
+                ValidateAndSetField(ref email, value, IsEmailValid);
+            }
         }
 
         public static bool IsMailerValid(string value, out string errorMessage) {
@@ -145,13 +153,17 @@ namespace Contacts {
         private string mailer;
         public string Mailer {
             get => mailer;
-            set { ValidateAndSetField(ref mailer, value, IsMailerValid); }
+            set {
+                ValidateAndSetField(ref mailer, value, IsMailerValid);
+            }
         }
 
         private string note;
         public string Note {
             get => note;
-            set { ValidateAndSetField(ref note, value, IsNoteValid); }
+            set {
+                ValidateAndSetField(ref note, value, IsNoteValid);
+            }
         }
 
         private DateTime birthday;
@@ -183,7 +195,7 @@ namespace Contacts {
             }
         }
 
-        public Contact(string firstName, string lastName, string nickname, string phone, 
+        public Contact(string firstName, string lastName, string nickname, string phone,
                        string email, string mailer, string note, string birthday) {
             FirstName = firstName;
             LastName = lastName;

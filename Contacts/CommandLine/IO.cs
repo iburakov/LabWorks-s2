@@ -193,6 +193,7 @@ namespace Contacts.CommandLine {
                         note: vcard.Note,
                         birthday: vcard.BirthDay?.ToShortDateString()
                     ));
+
                     ++addedCounter;
                 } catch (Exception e) when (
                     e is NullReferenceException ||
