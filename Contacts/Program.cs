@@ -15,17 +15,17 @@ namespace Contacts {
 
             mainMenu.AddItem(new MenuItem("Search", searchMenu.Invoke));
 
-            mainMenu.AddItem(new MenuItem("New contact", () => storage.Add(IO.GetContact())));
+            mainMenu.AddItem(new MenuItem("New contact", () => storage.Add(IO.ReadContact())));
 
             mainMenu.AddItem(new MenuItem("Load contacts from VCard", () => {
-                IO.LoadContactsFromVCard(IO.GetString("Filename: "), storage);
+                IO.LoadContactsFromVCard(IO.ReadString("Filename: "), storage);
             }));
 
             mainMenu.AddItem(new MenuItem("Save contacts to VCard", () => {
-                string filename = IO.GetString("Filename: ");
+                string filename = IO.ReadString("Filename: ");
                 if (File.Exists(filename)) {
                     Console.WriteLine($"File \"{filename}\" already exists. Rewrite?");
-                    if (!IO.GetBoolean(yesByDefault: false)) return;
+                    if (!IO.ReadBoolean(yesByDefault: false)) return;
                 }
                 IO.SaveContactsToVCard(filename, storage);
             }));
@@ -38,7 +38,7 @@ namespace Contacts {
         private const string searchResultsHeader = "Search results";
 
         private static void FieldSearchHandler(string field, ContactsFinder finder) {
-            string substring = IO.GetString($"{field} substring: ");
+            string substring = IO.ReadString($"{field} substring: ");
 
             IO.PrintContactList(
                 searchResultsHeader,
@@ -66,7 +66,7 @@ namespace Contacts {
             }));
 
             searchMenu.AddItem(new MenuItem("Phone", () => {
-                string substring = Contact.NormalizePhone(IO.GetString("Phone substring: "));
+                string substring = Contact.NormalizePhone(IO.ReadString("Phone substring: "));
 
                 IO.PrintContactList(
                     searchResultsHeader,
@@ -87,7 +87,7 @@ namespace Contacts {
             }));
 
             searchMenu.AddItem(new MenuItem("Birthday", () => {
-                string birthday = IO.GetBirthday();
+                string birthday = IO.ReadBirthday();
 
                 IO.PrintContactList(
                     searchResultsHeader,
@@ -109,7 +109,7 @@ namespace Contacts {
             bool needsExit = false;
             mainMenu.AddItem(new MenuItem("Exit", () => {
                 Console.WriteLine("Are you sure?");
-                needsExit = IO.GetBoolean(yesByDefault: false);
+                needsExit = IO.ReadBoolean(yesByDefault: false);
             }));
 
             Console.WriteLine("Enter the number of action and press [Enter]. Then follow instructions.");

@@ -37,7 +37,7 @@ namespace Contacts.CommandLine {
             short selectedIndex = -1;
             while (!gotIndex) {
                 try {
-                    selectedIndex = IO.GetInt16("Select an option: ", askAgain: false);
+                    selectedIndex = IO.ReadInt16("Select an option: ", askAgain: false);
 
                     if (selectedIndex <= 0 || selectedIndex > menuItems.Count) {
                         Console.WriteLine("Your choice is out of range.");

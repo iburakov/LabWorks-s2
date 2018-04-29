@@ -25,20 +25,20 @@ namespace Contacts.CommandLine {
             Console.WriteLine(contact.ToString());
         }
 
-        public static Contact GetContact() {
+        public static Contact ReadContact() {
             return new Contact(
-                firstName:  GetFirstName(),
-                lastName:   GetLastName(),
-                nickname:   GetNickname(),
-                phone:      GetPhone(),
-                email:      GetEmail(),
-                mailer:     GetMailer(),
-                note:       GetNote(),
-                birthday:   GetBirthday()
+                firstName:  ReadFirstName(),
+                lastName:   ReadLastName(),
+                nickname:   ReadNickname(),
+                phone:      ReadPhone(),
+                email:      ReadEmail(),
+                mailer:     ReadMailer(),
+                note:       ReadNote(),
+                birthday:   ReadBirthday()
             );
         }
 
-        private static string GetField(string fieldKind, Contact.FieldValidator<string> validator) {
+        private static string ReadField(string fieldKind, Contact.FieldValidator<string> validator) {
             bool gotString = false;
             while (!gotString) {
                 Console.Write("Enter {0}: ", fieldKind);
@@ -46,7 +46,7 @@ namespace Contacts.CommandLine {
 
                 if (!validator.Invoke(newField, out string errorMessage)) {
                     Console.WriteLine($"{errorMessage}. Try again?");
-                    if (GetBoolean(yesByDefault: true)) {
+                    if (ReadBoolean(yesByDefault: true)) {
                         continue;
                     } else {
                         break;
@@ -59,39 +59,39 @@ namespace Contacts.CommandLine {
             throw new UserRefusedException();
         }
 
-        public static string GetFirstName() {
-            return GetField("first name", Contact.IsFirstNameValid);
+        public static string ReadFirstName() {
+            return ReadField("first name", Contact.IsFirstNameValid);
         }
 
-        public static string GetLastName() {
-            return GetField("last name", Contact.IsLastNameValid);
+        public static string ReadLastName() {
+            return ReadField("last name", Contact.IsLastNameValid);
         }
 
-        public static string GetNickname() {
-            return GetField("nickname", Contact.IsNicknameValid);
+        public static string ReadNickname() {
+            return ReadField("nickname", Contact.IsNicknameValid);
         }
 
-        public static string  GetPhone() {
-            return GetField("phone", Contact.IsPhoneValid);
+        public static string ReadPhone() {
+            return ReadField("phone", Contact.IsPhoneValid);
         }
 
-        public static string GetEmail() {
-            return GetField("email", Contact.IsEmailValid);
+        public static string ReadEmail() {
+            return ReadField("email", Contact.IsEmailValid);
         }
 
-        public static string GetMailer() {
-            return GetField("mailer", Contact.IsMailerValid);
+        public static string ReadMailer() {
+            return ReadField("mailer", Contact.IsMailerValid);
         }
 
-        public static string GetNote() {
-            return GetField("note", Contact.IsNoteValid);
+        public static string ReadNote() {
+            return ReadField("note", Contact.IsNoteValid);
         }
 
-        public static string GetBirthday() {
-            return DateTime.Parse(GetField("birthday", Contact.IsBirthdayValid)).ToShortDateString();
+        public static string ReadBirthday() {
+            return DateTime.Parse(ReadField("birthday", Contact.IsBirthdayValid)).ToShortDateString();
         }
 
-        public static bool GetBoolean(bool yesByDefault) {
+        public static bool ReadBoolean(bool yesByDefault) {
             string options = (yesByDefault) ? "[Y/n]" : "[y/N]";
             Console.WriteLine(options);
 
@@ -119,7 +119,7 @@ namespace Contacts.CommandLine {
             
         }
 
-        public static string GetString(string header = "String: ") {
+        public static string ReadString(string header = "String: ") {
             string answer = null;
 
             do {
@@ -128,7 +128,7 @@ namespace Contacts.CommandLine {
 
                 if (answer == String.Empty) {
                     Console.WriteLine("Empty strings are not allowed here. Try again?");
-                    if (GetBoolean(yesByDefault: true) == false) {
+                    if (ReadBoolean(yesByDefault: true) == false) {
                         throw new UserRefusedException();
                     }
                 }
@@ -138,7 +138,7 @@ namespace Contacts.CommandLine {
             return answer;
         }
 
-        public static short GetInt16(string header = "Number: ", bool askAgain = true) {
+        public static short ReadInt16(string header = "Number: ", bool askAgain = true) {
             bool gotNumber = false;
 
             while (!gotNumber) {
@@ -148,7 +148,7 @@ namespace Contacts.CommandLine {
                 if (!Int16.TryParse(newNumberStr, out short newNumber)) {
                     if (askAgain) {
                         Console.WriteLine("Incorrect number. Try again?");
-                        if (GetBoolean(yesByDefault: true)) {
+                        if (ReadBoolean(yesByDefault: true)) {
                             continue;
                         } else {
                             break;
