@@ -15,7 +15,7 @@ namespace Contacts {
 
             mainMenu.AddItem(new MenuItem("Search", searchMenu.Invoke));
 
-            mainMenu.AddItem(new MenuItem("New contact", () => storage.Add(IO.ReadContact())));
+            mainMenu.AddItem(new MenuItem("New contact", () => storage.AddContact(IO.ReadContact())));
 
             mainMenu.AddItem(new MenuItem("Load contacts from VCard", () => {
                 IO.LoadContactsFromVCard(IO.ReadString("Filename: "), storage);

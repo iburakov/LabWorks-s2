@@ -8,7 +8,7 @@ namespace Contacts {
     public class LocalContactsStorage : IContactsStorage {
         private List<Contact> contacts = new List<Contact>();
 
-        public void Add(Contact newContact) => contacts.Add(newContact);
+        public void AddContact(Contact newContact) => contacts.Add(newContact);
 
         public List<Contact> FindByEmail(string substring) {
             return contacts.FindAll(contact => contact.Email.Contains(substring));

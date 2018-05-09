@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 namespace Contacts {
     public interface IContactsStorage {
-        void Add(Contact newContact);
+        void AddContact(Contact newContact);
 
         List<Contact> GetAllContacts();
+
+        // TODO: Refactor. Pass FieldKind + switch? Reflection?
         List<Contact> FindByFirstName(string substring);
         List<Contact> FindByLastName(string substring);
         List<Contact> FindByFullName(string substring);

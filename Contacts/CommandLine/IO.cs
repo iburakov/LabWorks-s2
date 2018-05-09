@@ -183,7 +183,7 @@ namespace Contacts.CommandLine {
                     var telephones = new List<Telephone>(vcard.Telephones);
                     var emails = new List<Email>(vcard.Emails);
 
-                    storage.Add(new Contact(
+                    storage.AddContact(new Contact(
                         firstName: vcard.FirstName,
                         lastName: vcard.LastName,
                         nickname: vcard.NickName,
