@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 using Contacts.CommandLine;
 
 namespace Contacts {
-    class RemoteStorage : IContactsStorage {
+    class RemoteContactsStorage : IContactsStorage {
         private const string defaultScheme = "https";
         private const int delayBetweenDotsMs = 500;
 
         public Uri BaseUri { get; private set; }
         private readonly HttpClient httpClient;
 
-        public RemoteStorage(string hostBaseUrl) {
+        public RemoteContactsStorage(string hostBaseUrl) {
             httpClient = new HttpClient {
                 Timeout = new TimeSpan(0, 0, 15)
             };
