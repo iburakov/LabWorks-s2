@@ -1,14 +1,13 @@
-﻿using MixERP.Net.VCards;
-using MixERP.Net.VCards.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace Contacts.CommandLine {
 
     public static class IO {
 
-        public static void PrintContactList(string header, List<Contact> contacts) {
+        public static void PrintContactList(string header, ReadOnlyCollection<Contact> contacts) {
             if (contacts.Count == 0) {
                 Console.WriteLine(header + ": nothing.");
                 return;
@@ -166,6 +165,12 @@ namespace Contacts.CommandLine {
             throw new UserRefusedException();
         }
 
+        public static string ComposeSummaryString(string action, int succeededContacts, int totalContacts) {
+            string s = (totalContacts == 1) ? "" : "s";
+            string were = (succeededContacts == 1) ? "was" : "were";
+            return $"{succeededContacts} out of {totalContacts} contact{s} {were} loaded.";
+        }
+
         public static void LoadContactsFromVCard(string filename, IContactsStorage storage) {
             if (!File.Exists(filename)) {
                 Console.WriteLine($"File \"{filename}\" doesn't exist!");
@@ -173,45 +178,19 @@ namespace Contacts.CommandLine {
             }
 
             // github.com/mixerp/MixERP.Net.VCards is licensed under the Apache License 2.0 - private use is allowed
-            IEnumerable<VCard> vcards = Deserializer.Deserialize(filename);
-
-            int addedCounter = 0, totalCounter = 0;
-            foreach (var vcard in vcards) {
-                try {
-                    ++totalCounter;
-
-                    var telephones = new List<Telephone>(vcard.Telephones);
-                    var emails = new List<Email>(vcard.Emails);
-
-                    storage.AddContact(new Contact(
-                        firstName: vcard.FirstName,
-                        lastName: vcard.LastName,
-                        nickname: vcard.NickName,
-                        phone: telephones[0].Number,
-                        email: emails[0].EmailAddress,
-                        mailer: vcard.Mailer,
-                        note: vcard.Note,
-                        birthday: vcard.BirthDay?.ToShortDateString()
-                    ));
-
-                    ++addedCounter;
-                } catch (Exception e) when (
-                    e is NullReferenceException ||
-                    e is ArgumentException
-                ) {
-                    Console.WriteLine($"Error! Corrupted contact ({e.GetType()}: {e.Message})");
-                }
-                
+            List<Contact> newContacts = Contact.ParseMany(File.ReadAllText(filename), out int addedCounter, out int totalCounter);
+            foreach (var contact in newContacts) {
+                storage.AddContact(contact, out string message);
+                Console.WriteLine(message);
             }
 
-            string s = (totalCounter == 1) ? "" : "s";
-            string were = (addedCounter == 1) ? "was" : "were";
-            Console.WriteLine($"{addedCounter} out of {totalCounter} contact{s} {were} loaded.");
+            Console.WriteLine(ComposeSummaryString("loaded", addedCounter, totalCounter));
         }
 
         public static void SaveContactsToVCard(string filename, IContactsStorage storage) {
             try {
-                File.WriteAllText(filename, String.Join("\n\n", storage.GetAllContacts().ConvertAll(contact => contact.ToVCard())));
+                var contacts = new List<Contact>(storage.GetAllContacts());
+                File.WriteAllText(filename, String.Join("\n\n", contacts.ConvertAll(contact => contact.ToVCard())));
                 Console.WriteLine("Done.");
             } catch (Exception e) when (
                 e is ArgumentException ||

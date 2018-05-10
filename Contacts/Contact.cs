@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MixERP.Net.VCards;
+using MixERP.Net.VCards.Models;
+using System;
+using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 
@@ -34,6 +37,15 @@ namespace Contacts {
         }
 
         public enum FieldKind { FirstName, LastName, FullName, Nickname, Email, Mailer, Phone, Note, Birthday };
+
+        public static string GetFieldKindName(FieldKind fieldKind) {
+            switch (fieldKind) {
+                case FieldKind.FirstName: return "First name";
+                case FieldKind.LastName: return "Last name";
+                case FieldKind.FullName: return "Full name";
+                default: return fieldKind.ToString();
+            }
+        }
 
         private static bool IsFieldValid(FieldKind fieldKind, string value, out string errorMessage) {
             if ((value is null) || (value.Length == 0)) {
@@ -228,6 +240,46 @@ MAILER:{Mailer}
 NOTE:{Note}
 END:VCARD
 ";
+        }
+
+        public static List<Contact> ParseMany(string vcards, out int parsedCounter, out int totalCounter) {
+            IEnumerable<VCard> parsedVcards = Deserializer.GetVCards(vcards);
+
+            parsedCounter = 0;
+            totalCounter = 0;
+            var parsedContacts = new List<Contact>();
+
+            foreach (var vcard in parsedVcards) {
+                try {
+                    ++totalCounter;
+
+                    var telephones = new List<Telephone>(vcard.Telephones);
+                    var emails = new List<Email>(vcard.Emails);
+
+                    parsedContacts.Add(new Contact(
+                        firstName: vcard.FirstName,
+                        lastName: vcard.LastName,
+                        nickname: vcard.NickName,
+                        phone: telephones[0].Number,
+                        email: emails[0].EmailAddress,
+                        mailer: vcard.Mailer,
+                        note: vcard.Note,
+                        birthday: vcard.BirthDay?.ToShortDateString()
+                    ));
+
+                    // flow gets here only if no exceptions occurred 
+                    ++parsedCounter;
+                }
+                catch (Exception e) when (
+                  e is NullReferenceException ||
+                  e is ArgumentException
+                ) {
+                    Console.WriteLine($"Error! Corrupted contact ({e.GetType()}: {e.Message})");
+                }
+
+            }
+
+            return parsedContacts;
         }
     }
 }
