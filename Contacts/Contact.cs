@@ -248,6 +248,24 @@ END:VCARD
 ";
         }
 
+        public static Contact Parse(string vcardStr) {
+            VCard vcard = Deserializer.GetVCard(vcardStr);
+
+            var telephones = new List<Telephone>(vcard.Telephones);
+            var emails = new List<Email>(vcard.Emails);
+
+            return new Contact(
+                firstName: vcard.FirstName,
+                lastName: vcard.LastName,
+                nickname: vcard.NickName,
+                phone: telephones[0].Number,
+                email: emails[0].EmailAddress,
+                mailer: vcard.Mailer,
+                note: vcard.Note,
+                birthday: vcard.BirthDay?.ToShortDateString()
+            );
+        }
+
         public static List<Contact> ParseMany(string vcards, out int parsedCounter, out int totalCounter) {
             IEnumerable<VCard> parsedVcards = Deserializer.GetVCards(vcards);
 
