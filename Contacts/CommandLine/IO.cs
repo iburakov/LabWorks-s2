@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net.Sockets;
 
 namespace Contacts.CommandLine {
 
@@ -26,15 +27,34 @@ namespace Contacts.CommandLine {
 
         public static Contact ReadContact() {
             return new Contact(
-                firstName:  ReadFirstName(),
-                lastName:   ReadLastName(),
-                nickname:   ReadNickname(),
-                phone:      ReadPhone(),
-                email:      ReadEmail(),
-                mailer:     ReadMailer(),
-                note:       ReadNote(),
-                birthday:   ReadBirthday()
+                firstName: ReadFirstName(),
+                lastName: ReadLastName(),
+                nickname: ReadNickname(),
+                phone: ReadPhone(),
+                email: ReadEmail(),
+                mailer: ReadMailer(),
+                note: ReadNote(),
+                birthday: ReadBirthday()
             );
+        }
+
+        public static Uri ReadUri(string header = "Enter URL (http[s]://host[:port]): ") {
+            Uri result = null;
+
+            do {
+                Console.Write(header);
+                try {
+                    result = new Uri(Console.ReadLine(), UriKind.Absolute);
+                }
+                catch (UriFormatException) {
+                    Console.WriteLine("Invalid URL. Try again?");
+                    if (ReadBoolean(yesByDefault: true) == false) {
+                        throw new UserRefusedException();
+                    }
+                }
+            } while (result is null);
+
+            return result;
         }
 
         private static string ReadField(string fieldKind, Contact.FieldValidator<string> validator) {
@@ -115,7 +135,7 @@ namespace Contacts.CommandLine {
             };
 
             return (bool)parseResult;
-            
+
         }
 
         public static string ReadString(string header = "String: ") {
@@ -143,7 +163,7 @@ namespace Contacts.CommandLine {
             while (!gotNumber) {
                 Console.Write(header);
                 string newNumberStr = Console.ReadLine();
-                
+
                 if (!Int16.TryParse(newNumberStr, out short newNumber)) {
                     if (askAgain) {
                         Console.WriteLine("Incorrect number. Try again?");
@@ -156,7 +176,7 @@ namespace Contacts.CommandLine {
                         Console.WriteLine("Incorrect number.");
                         throw new ArgumentException();
                     }
-                    
+
                 }
 
                 return newNumber;
@@ -180,8 +200,15 @@ namespace Contacts.CommandLine {
             // github.com/mixerp/MixERP.Net.VCards is licensed under the Apache License 2.0 - private use is allowed
             List<Contact> newContacts = Contact.ParseMany(File.ReadAllText(filename), out int addedCounter, out int totalCounter);
             foreach (var contact in newContacts) {
-                storage.AddContact(contact, out string message);
-                Console.WriteLine(message);
+                try {
+                    storage.AddContact(contact, out string message);
+                    Console.WriteLine(message);
+                }
+                catch (AggregateException notFlattenedAe) {
+                    AggregateException ae = notFlattenedAe.Flatten();
+                    Console.WriteLine($"Couldn't add {contact.FullName} to contacts: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
+                    addedCounter--;
+                }
             }
 
             Console.WriteLine(ComposeSummaryString("loaded", addedCounter, totalCounter));
@@ -189,20 +216,24 @@ namespace Contacts.CommandLine {
 
         public static void SaveContactsToVCard(string filename, IContactsStorage storage) {
             try {
-                var contacts = new List<Contact>(storage.GetAllContacts());
-                File.WriteAllText(filename, String.Join("\n\n", contacts.ConvertAll(contact => contact.ToVCard())));
+                File.WriteAllText(filename, Contact.ToVCardMany(storage.GetAllContacts()));
                 Console.WriteLine("Done.");
-            } catch (Exception e) when (
-                e is ArgumentException ||
-                e is PathTooLongException ||
-                e is DirectoryNotFoundException ||
-                e is IOException ||
-                e is UnauthorizedAccessException ||
-                e is NotSupportedException
+            }
+            catch (Exception e) when (
+              e is ArgumentException ||
+              e is PathTooLongException ||
+              e is DirectoryNotFoundException ||
+              e is IOException ||
+              e is UnauthorizedAccessException ||
+              e is NotSupportedException
             ) {
                 Console.WriteLine($"Error! {e.Message}");
             }
-            
+            catch (AggregateException notFlattenedAe) {
+                AggregateException ae = notFlattenedAe.Flatten();
+                Console.WriteLine($"Couldn't fetch contacts: {ae.InnerExceptions[ae.InnerExceptions.Count-1].Message}");
+            }
+
         }
     }
 }

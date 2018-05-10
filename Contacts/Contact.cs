@@ -2,6 +2,7 @@
 using MixERP.Net.VCards.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 
@@ -223,6 +224,11 @@ namespace Contacts {
 
         public override string ToString() {
             return $"{FirstName} {nickname} {LastName}, born {Birthday}, tel: {Phone}, email({Mailer}): {Email} - {Note}";
+        }
+
+        public static string ToVCardMany(ReadOnlyCollection<Contact> contacts) {
+            var contactsList = new List<Contact>(contacts);
+            return String.Join("\n\n", contactsList.ConvertAll(contact => contact.ToVCard());
         }
 
         public string ToVCard() {
