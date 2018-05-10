@@ -19,22 +19,27 @@ namespace Contacts {
                 Timeout = new TimeSpan(0, 0, 15)
             };
 
-            BaseUri = new Uri(hostBaseUrl, UriKind.Absolute);
-            if (BaseUri.Scheme != "http" && BaseUri.Scheme != "https") {
-                BaseUri = new Uri($"{defaultScheme}://{hostBaseUrl}", UriKind.Absolute);
+            try {
+                BaseUri = new Uri(hostBaseUrl, UriKind.Absolute);
                 if (BaseUri.Scheme != "http" && BaseUri.Scheme != "https") {
-                    throw new ArgumentException("Invalid URL was given. Format: http[s]://host[:port]");
+                    BaseUri = new Uri($"{defaultScheme}://{hostBaseUrl}", UriKind.Absolute);
+                    if (BaseUri.Scheme != "http" && BaseUri.Scheme != "https") {
+                        throw new UriFormatException();
+                    }
                 }
+            } catch (UriFormatException) {
+                throw new ArgumentException("Invalid URL was given. Format: http[s]://host[:port]");
             }
+            
         }
 
         private void DoHttpPostReqeust(Uri requestUri, HttpContent requestContent, out string response) {
             Task<HttpResponseMessage> postTask = httpClient.PostAsync(requestUri, requestContent);
-            postTask.Start();
             while (!postTask.IsCompleted) {
                 Console.Write(".");
                 Thread.Sleep(delayBetweenDotsMs);
             }
+            Console.WriteLine();
             HttpResponseMessage httpResponse = postTask.Result;
 
             httpResponse.EnsureSuccessStatusCode();
@@ -44,14 +49,13 @@ namespace Contacts {
 
         private void DoHttpGetReqeust(Uri requestUri, out string response) {
             Task<HttpResponseMessage> getTask = httpClient.GetAsync(requestUri);
-            getTask.Start();
             while (!getTask.IsCompleted) {
                 Console.Write(".");
                 Thread.Sleep(delayBetweenDotsMs);
             }
-            HttpResponseMessage httpResponse = getTask.Result;
+            Console.WriteLine();
 
-            httpResponse.EnsureSuccessStatusCode();
+            HttpResponseMessage httpResponse = getTask.Result.EnsureSuccessStatusCode();
 
             response = httpResponse.Content.ToString();
         }
@@ -61,30 +65,27 @@ namespace Contacts {
                 { new StringContent(newContact.ToVCard()), "contact" }
             };
 
-            Console.Write($"Sending a new contact to {BaseUri}...");
+            Console.WriteLine($"Sending a new contact to {BaseUri}");
             DoHttpPostReqeust(new Uri(BaseUri, "/api/addContact"), requestContent, out message);
-            Console.WriteLine();
         }
 
         public ReadOnlyCollection<Contact> GetAllContacts() {
-            Console.Write($"Getting all contacts from {BaseUri}...");
+            Console.WriteLine($"Getting all contacts from {BaseUri}");
             DoHttpGetReqeust(new Uri(BaseUri, "/api/getAllContacts"), out string response);
 
             List<Contact> parsed = Contact.ParseMany(response, out int parsedCounter, out int totalCounter);
 
-            Console.WriteLine();
             Console.WriteLine(IO.ComposeSummaryString("parsed", parsedCounter, totalCounter));
 
             return new ReadOnlyCollection<Contact>(parsed);
         }
 
         public ReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
-            Console.Write($"Searching contacts by {fieldKind} from {BaseUri}...");
+            Console.WriteLine($"Searching contacts by {fieldKind} in {BaseUri}");
             DoHttpGetReqeust(new Uri(BaseUri, $"/api/findBy?field={fieldKind}&query={query}"), out string response);
 
             List<Contact> parsed = Contact.ParseMany(response, out int parsedCounter, out int totalCounter);
 
-            Console.WriteLine();
             Console.WriteLine(IO.ComposeSummaryString("parsed", parsedCounter, totalCounter));
 
             return new ReadOnlyCollection<Contact>(parsed);

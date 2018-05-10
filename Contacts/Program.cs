@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Sockets;
 using Contacts.CommandLine;
 
 
@@ -11,14 +12,27 @@ namespace Contacts {
             var mainMenu = new Menu("Menu:");
 
             mainMenu.AddItem(new MenuItem("View all contacts", () => {
-                IO.PrintContactList("All contacts", storage.GetAllContacts());
+                try {
+                    IO.PrintContactList("All contacts", storage.GetAllContacts());
+                }
+                catch (AggregateException notFlattenedAe) {
+                    AggregateException ae = notFlattenedAe.Flatten();
+                    Console.WriteLine($"Couldn't fetch contacts: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
+                }
             }));
 
             mainMenu.AddItem(new MenuItem("Search", searchMenu.Invoke));
 
             mainMenu.AddItem(new MenuItem("New contact", () => {
-                storage.AddContact(IO.ReadContact(), out string message);
-                Console.WriteLine(message);
+                var newContact = IO.ReadContact();
+                try {
+                    storage.AddContact(newContact, out string message);
+                    Console.WriteLine(message);
+                }
+                catch (AggregateException notFlattenedAe) {
+                    AggregateException ae = notFlattenedAe.Flatten();
+                    Console.WriteLine($"Couldn't add {newContact.FullName} to contacts: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
+                }
             }));
 
             mainMenu.AddItem(new MenuItem("Load contacts from VCard", () => {
@@ -48,18 +62,23 @@ namespace Contacts {
             } else {
                 query = IO.ReadBirthday();
             }
-            
 
-            IO.PrintContactList(
-                searchResultsHeader,
-                storage.FindByField(fieldKind, query)
-            );
+            try {
+                IO.PrintContactList(
+                    searchResultsHeader,
+                    storage.FindByField(fieldKind, query)
+                );
+            }
+            catch (AggregateException notFlattenedAe) {
+                AggregateException ae = notFlattenedAe.Flatten();
+                Console.WriteLine($"Couldn't fetch contacts: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
+            }
         }
 
         private static Menu NewSearchMenu(IContactsStorage storage) {
             var searchMenu = new Menu("Search by:");
-            
-            foreach(var fieldKind in (Contact.FieldKind[])typeof(Contact.FieldKind).GetEnumValues()) {
+
+            foreach (var fieldKind in (Contact.FieldKind[])typeof(Contact.FieldKind).GetEnumValues()) {
                 searchMenu.AddItem(new MenuItem(Contact.GetFieldKindName(fieldKind), () => {
                     SearchByField(fieldKind, storage);
                 }));
@@ -71,14 +90,21 @@ namespace Contacts {
         }
 
         public static void Main(string[] args) {
+            IContactsStorage storage;
             if (args.Length == 0) {
-
+                storage = new LocalContactsStorage();
+            } else {
+                try {
+                    storage = new RemoteContactsStorage(args[0]);
+                }
+                catch (ArgumentException e) {
+                    Console.WriteLine(e.Message);
+                    return;
+                }
             }
 
-            var localStorage = new LocalContactsStorage();
-
-            Menu searchMenu = NewSearchMenu(localStorage);
-            Menu mainMenu = NewMainMenu(searchMenu, localStorage);
+            Menu searchMenu = NewSearchMenu(storage);
+            Menu mainMenu = NewMainMenu(searchMenu, storage);
 
             bool needsExit = false;
             mainMenu.AddItem(new MenuItem("Exit", () => {
