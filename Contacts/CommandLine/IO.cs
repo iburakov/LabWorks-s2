@@ -188,7 +188,7 @@ namespace Contacts.CommandLine {
         public static string ComposeSummaryString(string action, int succeededContacts, int totalContacts) {
             string s = (totalContacts == 1) ? "" : "s";
             string were = (succeededContacts == 1) ? "was" : "were";
-            return $"{succeededContacts} out of {totalContacts} contact{s} {were} loaded.";
+            return $"{succeededContacts} out of {totalContacts} contact{s} {were} {action}.";
         }
 
         public static void LoadContactsFromVCard(string filename, IContactsStorage storage) {
