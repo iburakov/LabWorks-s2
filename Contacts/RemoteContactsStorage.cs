@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +10,6 @@ using Contacts.CommandLine;
 namespace Contacts {
     class RemoteContactsStorage : IContactsStorage {
         private const string defaultScheme = "https";
-        private const int delayBetweenDotsMs = 500;
 
         public Uri BaseUri { get; private set; }
         private readonly HttpClient httpClient;
@@ -33,31 +33,26 @@ namespace Contacts {
             
         }
 
-        private void DoHttpPostReqeust(Uri requestUri, HttpContent requestContent, out string response) {
-            Task<HttpResponseMessage> postTask = httpClient.PostAsync(requestUri, requestContent);
-            while (!postTask.IsCompleted) {
-                Console.Write(".");
-                Thread.Sleep(delayBetweenDotsMs);
+        private void DoHttpReqeust(Task<HttpResponseMessage> requestTask, out string response) {
+            int checks = 0;
+            int delay = 25;
+            while (!requestTask.IsCompleted) {
+                if (checks++ > 4) {
+                    Console.Write(".");
+                }
+                Thread.Sleep(delay += 25);
             }
-            Console.WriteLine();
-            HttpResponseMessage httpResponse = postTask.Result;
-
-            httpResponse.EnsureSuccessStatusCode();
-
-            response = httpResponse.Content.ToString();
-        }
-
-        private void DoHttpGetReqeust(Uri requestUri, out string response) {
-            Task<HttpResponseMessage> getTask = httpClient.GetAsync(requestUri);
-            while (!getTask.IsCompleted) {
-                Console.Write(".");
-                Thread.Sleep(delayBetweenDotsMs);
+            if (checks > 5) {
+                Console.WriteLine();
             }
-            Console.WriteLine();
 
-            HttpResponseMessage httpResponse = getTask.Result.EnsureSuccessStatusCode();
+            HttpResponseMessage httpResponse = requestTask.Result.EnsureSuccessStatusCode();
 
-            response = httpResponse.Content.ToString();
+            Task<string> readTask = httpResponse.Content.ReadAsStringAsync();
+            while (!readTask.IsCompleted) {
+                Thread.Sleep(50);
+            }
+            response = readTask.Result;
         }
 
         public void AddContact(Contact newContact, out string message) {
@@ -66,12 +61,13 @@ namespace Contacts {
             };
 
             Console.WriteLine($"Sending a new contact to {BaseUri}");
-            DoHttpPostReqeust(new Uri(BaseUri, "/api/addContact"), requestContent, out message);
+            DoHttpReqeust(httpClient.PostAsync(new Uri(BaseUri, "/api/addContact"), requestContent), out message);
+            message = $"[@{BaseUri}] " + message;
         }
 
         public ReadOnlyCollection<Contact> GetAllContacts() {
             Console.WriteLine($"Getting all contacts from {BaseUri}");
-            DoHttpGetReqeust(new Uri(BaseUri, "/api/getAllContacts"), out string response);
+            DoHttpReqeust(httpClient.GetAsync(new Uri(BaseUri, "/api/getAllContacts")), out string response);
 
             List<Contact> parsed = Contact.ParseMany(response, out int parsedCounter, out int totalCounter);
 
@@ -81,8 +77,8 @@ namespace Contacts {
         }
 
         public ReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
-            Console.WriteLine($"Searching contacts by {fieldKind} in {BaseUri}");
-            DoHttpGetReqeust(new Uri(BaseUri, $"/api/findBy?field={fieldKind}&query={query}"), out string response);
+            Console.WriteLine($"Searching contacts by {Contact.GetFieldKindName(fieldKind)} at {BaseUri}");
+            DoHttpReqeust(httpClient.GetAsync(new Uri(BaseUri, $"/api/findBy?field={fieldKind}&query={query}")), out string response);
 
             List<Contact> parsed = Contact.ParseMany(response, out int parsedCounter, out int totalCounter);
 
