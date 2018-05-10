@@ -1,56 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Contacts {
 
     public class LocalContactsStorage : IContactsStorage {
         private List<Contact> contacts = new List<Contact>();
 
-        public void AddContact(Contact newContact) => contacts.Add(newContact);
-
-        public List<Contact> FindByEmail(string substring) {
-            return contacts.FindAll(contact => contact.Email.Contains(substring));
+        public void AddContact(Contact newContact, out string message) {
+            contacts.Add(newContact);
+            message = $"Successfully added {newContact.FullName} to contacts!";
         }
 
-        public List<Contact> FindByFirstName(string substring) {
-            return contacts.FindAll(contact => contact.FirstName.Contains(substring));
+        public ReadOnlyCollection<Contact> GetAllContacts() {
+            return new ReadOnlyCollection<Contact>(contacts);
         }
 
-        public List<Contact> FindByLastName(string substring) {
-            return contacts.FindAll(contact => contact.LastName.Contains(substring));
+        public ReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
+            List<Contact> result;
+            switch (fieldKind) {
+                case Contact.FieldKind.FullName:
+                    result = contacts.FindAll(contact => 
+                        $"{contact.FirstName} {contact.LastName}".Contains(query)
+                        ||
+                        $"{contact.LastName} {contact.FirstName}".Contains(query)
+                    );
+                break;
+                case Contact.FieldKind.Phone: result = contacts.FindAll(contact => contact.NormalizedPhone.Contains(Contact.NormalizePhone(query))); break;
+                case Contact.FieldKind.Birthday: result = contacts.FindAll(contact => contact.Birthday == query); break;
+                default:
+                    result = contacts.FindAll(contact =>
+                        typeof(Contact).GetProperty(fieldKind.ToString())
+                        .GetValue(contact).ToString()
+                        .Contains(query)
+                    );
+                break;
+            }
+            return new ReadOnlyCollection<Contact>(result);
         }
-
-        public List<Contact> FindByFullName(string substring) {
-            return contacts.FindAll(contact => (contact.FirstName + " " + contact.LastName)
-                                                .Contains(substring));
-        }
-
-        public List<Contact> FindByPhone(string substring) {
-            return contacts.FindAll(contact => { return contact.NormalizedPhone.Contains(substring); });
-        }
-
-        public List<Contact> GetAllContacts() {
-            return new List<Contact>(contacts);
-        }
-
-        public List<Contact> FindByNickname(string substring) {
-            return contacts.FindAll(contact => contact.Nickname.Contains(substring));
-        }
-
-        public List<Contact> FindByMailer(string substring) {
-            return contacts.FindAll(contact => contact.Mailer.Contains(substring));
-        }
-
-        public List<Contact> FindByNote(string substring) {
-            return contacts.FindAll(contact => contact.Note.Contains(substring));
-        }
-
-        public List<Contact> FindByBirthday(string birthday) {
-            return contacts.FindAll(contact => contact.Birthday == birthday);
-        }
-
     }
 
 }

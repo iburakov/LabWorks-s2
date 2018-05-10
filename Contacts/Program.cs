@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Contacts.CommandLine;
 
+
 namespace Contacts {
 
     public sealed class Program {
@@ -15,7 +16,10 @@ namespace Contacts {
 
             mainMenu.AddItem(new MenuItem("Search", searchMenu.Invoke));
 
-            mainMenu.AddItem(new MenuItem("New contact", () => storage.AddContact(IO.ReadContact())));
+            mainMenu.AddItem(new MenuItem("New contact", () => {
+                storage.AddContact(IO.ReadContact(), out string message);
+                Console.WriteLine(message);
+            }));
 
             mainMenu.AddItem(new MenuItem("Load contacts from VCard", () => {
                 IO.LoadContactsFromVCard(IO.ReadString("Filename: "), storage);
@@ -37,63 +41,29 @@ namespace Contacts {
         private delegate List<Contact> ContactsFinder(string substring);
         private const string searchResultsHeader = "Search results";
 
-        private static void FieldSearchHandler(string field, ContactsFinder finder) {
-            string substring = IO.ReadString($"{field} substring: ");
+        private static void SearchByField(Contact.FieldKind fieldKind, IContactsStorage storage) {
+            string query;
+            if (fieldKind != Contact.FieldKind.Birthday) {
+                query = IO.ReadString(Contact.GetFieldKindName(fieldKind) + " substring:");
+            } else {
+                query = IO.ReadBirthday();
+            }
+            
 
             IO.PrintContactList(
                 searchResultsHeader,
-                finder.Invoke(substring)
+                storage.FindByField(fieldKind, query)
             );
         }
 
         private static Menu NewSearchMenu(IContactsStorage storage) {
             var searchMenu = new Menu("Search by:");
-
-            searchMenu.AddItem(new MenuItem("First name", () => {
-                FieldSearchHandler("First name", storage.FindByFirstName);
-            }));
-
-            searchMenu.AddItem(new MenuItem("Last name", () => {
-                FieldSearchHandler("Last name", storage.FindByLastName);
-            }));
-
-            searchMenu.AddItem(new MenuItem("Nickname", () => {
-                FieldSearchHandler("Nickname", storage.FindByNickname);
-            }));
-
-            searchMenu.AddItem(new MenuItem("Full name", () => {
-                FieldSearchHandler("Full name", storage.FindByFullName);
-            }));
-
-            searchMenu.AddItem(new MenuItem("Phone", () => {
-                string substring = Contact.NormalizePhone(IO.ReadString("Phone substring: "));
-
-                IO.PrintContactList(
-                    searchResultsHeader,
-                    storage.FindByPhone(substring)
-                );
-            }));
-
-            searchMenu.AddItem(new MenuItem("Email", () => {
-                FieldSearchHandler("Email", storage.FindByEmail);
-            }));
-
-            searchMenu.AddItem(new MenuItem("Mailer", () => {
-                FieldSearchHandler("Mailer", storage.FindByMailer);
-            }));
-
-            searchMenu.AddItem(new MenuItem("Note", () => {
-                FieldSearchHandler("Note", storage.FindByNote);
-            }));
-
-            searchMenu.AddItem(new MenuItem("Birthday", () => {
-                string birthday = IO.ReadBirthday();
-
-                IO.PrintContactList(
-                    searchResultsHeader,
-                    storage.FindByBirthday(birthday)
-                );
-            }));
+            
+            foreach(var fieldKind in (Contact.FieldKind[])typeof(Contact.FieldKind).GetEnumValues()) {
+                searchMenu.AddItem(new MenuItem(Contact.GetFieldKindName(fieldKind), () => {
+                    SearchByField(fieldKind, storage);
+                }));
+            }
 
             searchMenu.AddItem(new MenuItem("Back", () => { return; }));
 
@@ -101,6 +71,10 @@ namespace Contacts {
         }
 
         public static void Main(string[] args) {
+            if (args.Length == 0) {
+
+            }
+
             var localStorage = new LocalContactsStorage();
 
             Menu searchMenu = NewSearchMenu(localStorage);
