@@ -228,7 +228,7 @@ namespace Contacts {
 
         public static string ToVCardMany(ReadOnlyCollection<Contact> contacts) {
             var contactsList = new List<Contact>(contacts);
-            return String.Join("\n\n", contactsList.ConvertAll(contact => contact.ToVCard());
+            return String.Join("\n\n", contactsList.ConvertAll(contact => contact.ToVCard()));
         }
 
         public string ToVCard() {
