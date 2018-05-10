@@ -11,6 +11,18 @@ namespace Contacts {
         private const short MaxMailerLength = 50;
         private const short MaxNoteLength = 500;
 
+        public Contact(string firstName, string lastName, string nickname, string phone,
+               string email, string mailer, string note, string birthday) {
+            FirstName = firstName;
+            LastName = lastName;
+            Nickname = nickname;
+            Phone = phone;
+            Email = email;
+            Mailer = mailer;
+            Note = note;
+            Birthday = birthday;
+        }
+
         public delegate bool FieldValidator<T>(T value, out string errorMessage);
 
         private void ValidateAndSetField<T>(ref T fieldToSet, T value, FieldValidator<T> fieldValidator) {
@@ -21,7 +33,7 @@ namespace Contacts {
             }
         }
 
-        private enum FieldKind { FirstName, LastName, Nickname, Mailer, Note };
+        public enum FieldKind { FirstName, LastName, FullName, Nickname, Email, Mailer, Phone, Note, Birthday };
 
         private static bool IsFieldValid(FieldKind fieldKind, string value, out string errorMessage) {
             if ((value is null) || (value.Length == 0)) {
@@ -36,7 +48,7 @@ namespace Contacts {
                 case FieldKind.Nickname: maxFieldLength = MaxNicknameLength; break;
                 case FieldKind.Mailer: maxFieldLength = MaxMailerLength; break;
                 case FieldKind.Note: maxFieldLength = MaxNoteLength; break;
-                default: maxFieldLength = short.MaxValue; break;
+                default: throw new ArgumentException("IsFieldValid used for a FieldKind that has its own special validator.");
             }
 
             var isLengthValid = value.Length <= maxFieldLength;
@@ -73,6 +85,8 @@ namespace Contacts {
                 ValidateAndSetField(ref lastName, value, IsLastNameValid);
             }
         }
+
+        public string FullName { get => $"{FirstName} {LastName}"; }
 
         private string nickname;
         public string Nickname {
@@ -193,18 +207,6 @@ namespace Contacts {
                 errorMessage = e.Message;
                 return false;
             }
-        }
-
-        public Contact(string firstName, string lastName, string nickname, string phone,
-                       string email, string mailer, string note, string birthday) {
-            FirstName = firstName;
-            LastName = lastName;
-            Nickname = nickname;
-            Phone = phone;
-            Email = email;
-            Mailer = mailer;
-            Note = note;
-            Birthday = birthday;
         }
 
         public override string ToString() {
