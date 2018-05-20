@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Sockets;
+using System.Net.Http;
 using Contacts.CommandLine;
-
 
 namespace Contacts {
 
@@ -32,6 +31,9 @@ namespace Contacts {
                 catch (AggregateException notFlattenedAe) {
                     AggregateException ae = notFlattenedAe.Flatten();
                     Console.WriteLine($"Couldn't add {newContact.FullName} to contacts: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
+                }
+                catch (HttpRequestException e) {
+                    Console.WriteLine($"Couldn't add {newContact.FullName} to contacts: {e.Message}");
                 }
             }));
 
@@ -97,7 +99,10 @@ namespace Contacts {
                 try {
                     storage = new RemoteContactsStorage(args[0]);
                 }
-                catch (ArgumentException e) {
+                catch (Exception e) when (
+                    e is ArgumentException ||
+                    e is UriFormatException
+                ){
                     Console.WriteLine(e.Message);
                     return;
                 }
@@ -112,7 +117,18 @@ namespace Contacts {
                 needsExit = IO.ReadBoolean(yesByDefault: false);
             }));
 
+            if (storage is RemoteContactsStorage remoteStorage) {
+                if (remoteStorage.IsGreetingSuccessful) {
+                    Console.WriteLine($"Connected.");
+                } else {
+                    Console.WriteLine($"Bad server. Terminating.");
+                    return;
+                }
+            } else {
+                Console.WriteLine("Working with local contact storage.");
+            }
             Console.WriteLine("Enter the number of action and press [Enter]. Then follow instructions.");
+
             while (!needsExit) {
                 try {
                     mainMenu.Invoke();
@@ -121,7 +137,6 @@ namespace Contacts {
                     continue;
                 }
             }
-
 
         }
 

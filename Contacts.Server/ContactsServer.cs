@@ -1,22 +1,17 @@
-﻿using Contacts.CommandLine;
-using HttpMultipartParser;
+﻿using HttpMultipartParser;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Contacts.Server {
     public class ContactsServer {
         private readonly HttpListener httpListener;
         private readonly Uri listenerUri;
-        private readonly IContactsStorage storage;
+        private readonly LocalContactsStorage storage;
 
-        public ContactsServer(Uri uriToListen, IContactsStorage storage) {
+        public ContactsServer(Uri uriToListen, LocalContactsStorage storage) {
             httpListener = new HttpListener();
             httpListener.Prefixes.Add(uriToListen.ToString());
             listenerUri = uriToListen;
@@ -36,11 +31,6 @@ namespace Contacts.Server {
         private void HandleRequest(object contextObject) {
             var context = (HttpListenerContext)contextObject;
             context.Response.SendChunked = true;
-
-            // context.Request.InputStream.Read(requestBytes, 0, (int)context.Request.InputStream.Length);
-
-            // var bytes = Encoding.UTF8.GetBytes(new string('3', 1000) + "\n");
-            // context.Response.OutputStream.Write(bytes, 0, bytes.Length);
 
             Console.WriteLine($"[{DateTime.Now}] {context.Response.StatusCode} " +
                 $"{context.Request.HttpMethod} request to {context.Request.Url.AbsolutePath}");
@@ -69,11 +59,18 @@ namespace Contacts.Server {
                     string vcard = parser.GetParameterValue("contact");
                     Debug.Assert(vcard != null, "Request should have a 'contact' field");
                     storage.AddContact(Contact.Parse(vcard), out string message);
+
                     SetResponseWithString(message);
                 }
                 break;
-
-
+                case "/api/greet" when context.Request.HttpMethod == "GET": {
+                    context.Response.StatusCode = (int)HttpStatusCode.OK;
+                }
+                break;
+                default: {
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                }
+                break;
             }
 
             context.Response.Close();

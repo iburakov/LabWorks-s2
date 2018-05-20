@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net.Http;
 using System.Net.Sockets;
 
 namespace Contacts.CommandLine {
@@ -38,20 +39,32 @@ namespace Contacts.CommandLine {
             );
         }
 
+        public static bool TryParseUri(string uriString, out Uri result) {
+            // either input is NOT a valid URL
+            // or it's scheme is NOT HTTP and prepended url is not correct at the same time
+            if (!Uri.TryCreate(uriString, UriKind.Absolute, out result) ||
+                result.Scheme != "http" && !Uri.TryCreate($"http://{uriString}", UriKind.Absolute, out result)
+            ) {
+                result = null;
+                return false;
+            }
+            return true;
+        }
+
         public static Uri ReadUri(string header = "Enter URL (http[s]://host[:port]): ") {
             Uri result = null;
 
             do {
                 Console.Write(header);
-                try {
-                    result = new Uri(Console.ReadLine(), UriKind.Absolute);
-                }
-                catch (UriFormatException) {
-                    Console.WriteLine("Invalid URL. Try again?");
+                
+                if (!TryParseUri(Console.ReadLine(), out result)) {
+                    Console.WriteLine($"Invalid URL. Try again?");
                     if (ReadBoolean(yesByDefault: true) == false) {
                         throw new UserRefusedException();
                     }
+                    result = null;
                 }
+
             } while (result is null);
 
             return result;
@@ -209,6 +222,10 @@ namespace Contacts.CommandLine {
                     Console.WriteLine($"Couldn't add {contact.FullName} to contacts: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
                     addedCounter--;
                 }
+                catch (HttpRequestException e) {
+                    Console.WriteLine($"Couldn't add {contact.FullName} to contacts: {e.Message}");
+                    addedCounter--;
+                }
             }
 
             Console.WriteLine(ComposeSummaryString("loaded", addedCounter, totalCounter));
@@ -231,7 +248,7 @@ namespace Contacts.CommandLine {
             }
             catch (AggregateException notFlattenedAe) {
                 AggregateException ae = notFlattenedAe.Flatten();
-                Console.WriteLine($"Couldn't fetch contacts: {ae.InnerExceptions[ae.InnerExceptions.Count-1].Message}");
+                Console.WriteLine($"Couldn't fetch contacts: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
             }
 
         }
