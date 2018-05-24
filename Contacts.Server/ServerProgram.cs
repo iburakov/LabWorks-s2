@@ -3,8 +3,8 @@ using System;
 using System.Net;
 
 namespace Contacts.Server {
-    public sealed class Program {
-        public static void Main(string[] args) {
+    public sealed class ServerProgram {
+        public static Uri GetUri(string[] args) {
             Uri listenerUri = null;
 
             if (args.Length > 0) {
@@ -17,6 +17,12 @@ namespace Contacts.Server {
             if (listenerUri is null) {
                 listenerUri = IO.ReadUri("Enter URL to listen (http://host[:port]): ");
             }
+
+            return listenerUri;
+        }
+
+        public static void Main(string[] args) {
+            Uri listenerUri = GetUri(args);
 
             try {
                 var server = new ContactsServer(listenerUri, new LocalContactsStorage());

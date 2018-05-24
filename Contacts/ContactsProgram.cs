@@ -6,7 +6,7 @@ using Contacts.CommandLine;
 
 namespace Contacts {
 
-    public sealed class Program {
+    public sealed class ContactsProgram {
         private static Menu NewMainMenu(Menu searchMenu, IContactsStorage storage) {
             var mainMenu = new Menu("Menu:");
 

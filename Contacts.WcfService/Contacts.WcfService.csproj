@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4E25BFCC-FE3B-4913-8816-B9C98C749F40}</ProjectGuid>
+    <ProjectGuid>{4E98620B-2282-4FEB-9E14-649CDF4E7A55}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Contacts.Server</RootNamespace>
-    <AssemblyName>Contacts.Server</AssemblyName>
+    <RootNamespace>Contacts.WcfService</RootNamespace>
+    <AssemblyName>Contacts.WcfService</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,15 +30,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>Contacts.Server.ServerProgram</StartupObject>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HttpMultipartParser, Version=2.2.4.0, Culture=neutral, PublicKeyToken=6d293681fa6c7a03, processorArchitecture=MSIL">
-      <HintPath>..\packages\HttpMultipartParser.2.2.4\lib\net45\HttpMultipartParser.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,13 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ServerProgram.cs" />
+    <Compile Include="ContactsWcfService.cs" />
+    <Compile Include="IContactsWcfService.cs" />
+    <Compile Include="WcfServiceProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ContactsServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Contacts\Contacts.csproj">
