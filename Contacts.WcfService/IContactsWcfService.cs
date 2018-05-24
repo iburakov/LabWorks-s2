@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ServiceModel;
 
 namespace Contacts.WcfService {
     [ServiceContract]
     public interface IContactsWcfService {
         [OperationContract]
-        bool greet();
+        IReadOnlyCollection<ContactData> GetAllContacts();
 
         [OperationContract]
-        IReadOnlyCollection<Contact> GetAllContacts();
+        IReadOnlyCollection<ContactData> FindBy(Contact.FieldKind fieldKind, string query);
 
         [OperationContract]
-        IReadOnlyCollection<Contact> FindBy(Contact.FieldKind fieldKind, string query);
-
-        [OperationContract]
-        string AddContact(Contact contact);
+        string AddContact(ContactData contact);
     }
 }

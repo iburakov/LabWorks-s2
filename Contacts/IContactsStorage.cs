@@ -1,9 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 
 namespace Contacts {
     public interface IContactsStorage {
         void AddContact(Contact newContact, out string message);
-        ReadOnlyCollection<Contact> GetAllContacts();
-        ReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query);
+        IReadOnlyCollection<Contact> GetAllContacts();
+        IReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query);
     }
 }

@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 
 namespace Contacts {
-    [DataContract]
     public class Contact {
         private const short MaxFirstNameLength = 16;
         private const short MaxLastNameLength = 36;
@@ -86,7 +85,6 @@ namespace Contacts {
         }
 
         private string firstName;
-        [DataMember]
         public string FirstName {
             get => firstName;
             set {
@@ -95,7 +93,6 @@ namespace Contacts {
         }
 
         private string lastName;
-        [DataMember]
         public string LastName {
             get => lastName;
             set {
@@ -103,11 +100,9 @@ namespace Contacts {
             }
         }
 
-        [DataMember]
         public string FullName { get => $"{FirstName} {LastName}"; }
 
         private string nickname;
-        [DataMember]
         public string Nickname {
             get => nickname;
             set {
@@ -144,7 +139,6 @@ namespace Contacts {
 
         private string phone;
         public string NormalizedPhone { get => NormalizePhone(phone); }
-        [DataMember]
         public string Phone {
             get => phone;
             set {
@@ -169,7 +163,6 @@ namespace Contacts {
         }
 
         private string email;
-        [DataMember]
         public string Email {
             get => email;
             set {
@@ -186,7 +179,6 @@ namespace Contacts {
         }
 
         private string mailer;
-        [DataMember]
         public string Mailer {
             get => mailer;
             set {
@@ -195,7 +187,6 @@ namespace Contacts {
         }
 
         private string note;
-        [DataMember]
         public string Note {
             get => note;
             set {
@@ -204,7 +195,6 @@ namespace Contacts {
         }
 
         private DateTime birthday;
-        [DataMember]
         public string Birthday {
             get => birthday.ToShortDateString();
             set {
@@ -237,7 +227,7 @@ namespace Contacts {
             return $"{FirstName} {nickname} {LastName}, born {Birthday}, tel: {Phone}, email({Mailer}): {Email} - {Note}";
         }
 
-        public static string ToVCardMany(ReadOnlyCollection<Contact> contacts) {
+        public static string ToVCardMany(IReadOnlyCollection<Contact> contacts) {
             var contactsList = new List<Contact>(contacts);
             return String.Join("\n\n", contactsList.ConvertAll(contact => contact.ToVCard()));
         }

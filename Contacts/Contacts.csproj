@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLine\IO.cs" />
-    <Compile Include="Connected Services\WcfService\Reference.cs">
+    <Compile Include="Connected Services\WcfServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -65,18 +65,22 @@
     <Compile Include="ContactsProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteContactsStorage.cs" />
+    <Compile Include="WCFContactsStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="ClassDiagram1.cd" />
-    <None Include="Connected Services\WcfService\ContactsWcfService.wsdl" />
-    <None Include="Connected Services\WcfService\item.xsd">
+    <None Include="Connected Services\WcfServiceReference\ContactsWcfService.wsdl" />
+    <None Include="Connected Services\WcfServiceReference\item.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\WcfService\item1.xsd">
+    <None Include="Connected Services\WcfServiceReference\item1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\WcfService\item2.xsd">
+    <None Include="Connected Services\WcfServiceReference\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\WcfServiceReference\item3.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
@@ -85,19 +89,19 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Connected Services\WcfService\" />
+    <WCFMetadataStorage Include="Connected Services\WcfServiceReference\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Connected Services\WcfService\item.disco" />
+    <None Include="Connected Services\WcfServiceReference\item.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Connected Services\WcfService\configuration91.svcinfo" />
+    <None Include="Connected Services\WcfServiceReference\configuration91.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Connected Services\WcfService\configuration.svcinfo" />
+    <None Include="Connected Services\WcfServiceReference\configuration.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Connected Services\WcfService\Reference.svcmap">
+    <None Include="Connected Services\WcfServiceReference\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

@@ -11,11 +11,11 @@ namespace Contacts {
             message = $"Successfully added {newContact.FullName} to contacts!";
         }
 
-        public ReadOnlyCollection<Contact> GetAllContacts() {
+        public IReadOnlyCollection<Contact> GetAllContacts() {
             return new ReadOnlyCollection<Contact>(contacts);
         }
 
-        public ReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
+        public IReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
             List<Contact> result;
             switch (fieldKind) {
                 case Contact.FieldKind.FullName:

@@ -9,16 +9,17 @@ namespace Contacts.CommandLine {
 
     public static class IO {
 
-        public static void PrintContactList(string header, ReadOnlyCollection<Contact> contacts) {
+        public static void PrintContactList(string header, IReadOnlyCollection<Contact> contacts) {
             if (contacts.Count == 0) {
                 Console.WriteLine(header + ": nothing.");
                 return;
             }
 
             Console.WriteLine($"{header} ({contacts.Count}):");
-            for (int i = 0; i < contacts.Count; ++i) {
-                Console.Write("\t#{0}: ", i + 1);
-                PrintContact(contacts[i]);
+            int i = 0;
+            foreach (Contact contact in contacts) {
+                Console.Write("\t#{0}: ", ++i);
+                PrintContact(contact);
             }
         }
 

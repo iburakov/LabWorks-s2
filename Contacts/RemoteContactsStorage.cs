@@ -89,7 +89,7 @@ namespace Contacts {
             }
         }
 
-        public ReadOnlyCollection<Contact> GetAllContacts() {
+        public IReadOnlyCollection<Contact> GetAllContacts() {
             Console.WriteLine($"Getting all contacts from {BaseUri}");
             if (!DoHttpReqeust(httpClient.GetAsync(new Uri(BaseUri, "/api/getAllContacts")), out string response)) {
                 Console.WriteLine(response);
@@ -103,7 +103,7 @@ namespace Contacts {
             return new ReadOnlyCollection<Contact>(parsed);
         }
 
-        public ReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
+        public IReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
             Console.WriteLine($"Searching contacts by {Contact.GetFieldKindName(fieldKind)} at {BaseUri}");
             if (!DoHttpReqeust(httpClient.GetAsync(new Uri(BaseUri, $"/api/findBy?field={fieldKind}&query={query}")), out string response)) {
                 Console.WriteLine(response);

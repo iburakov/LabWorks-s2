@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContactData.cs" />
     <Compile Include="ContactsWcfService.cs" />
     <Compile Include="IContactsWcfService.cs" />
     <Compile Include="WcfServiceProgram.cs" />
