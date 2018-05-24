@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Contacts;
 
 namespace Contacts.WcfService {
     public class ContactsWcfService : IContactsWcfService {

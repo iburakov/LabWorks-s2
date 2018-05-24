@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
-using System.Runtime.Serialization;
+using Contacts.WcfServiceReference;
 
 namespace Contacts {
     public class Contact {
@@ -306,5 +306,40 @@ END:VCARD
 
             return parsedContacts;
         }
+
+        public ContactData ToContactData() {
+            return new ContactData {
+                firstName = firstName,
+                lastName = lastName,
+                nickname = nickname,
+                phone = phone,
+                email = email,
+                mailer = mailer,
+                note = note,
+                birthday = birthday
+            };
+        }
+
+        public static Contact NewFromContactData(ContactData contactData) {
+            return new Contact(
+                firstName: contactData.firstName,
+                lastName: contactData.lastName,
+                nickname: contactData.nickname,
+                phone: contactData.phone,
+                email: contactData.email,
+                mailer: contactData.mailer,
+                note: contactData.note,
+                birthday: contactData.birthday.ToShortDateString()
+            );
+        }
+
+        public static IReadOnlyCollection<Contact> NewFromContactDataCollection(IReadOnlyCollection<ContactData> contactDatasReadOnly) {
+            var contacts = new List<Contact>();
+            foreach (var contactData in contactDatasReadOnly) {
+                contacts.Add(NewFromContactData(contactData));
+            }
+            return contacts.AsReadOnly();
+        }
+
     }
 }

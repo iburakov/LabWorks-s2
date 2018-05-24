@@ -95,6 +95,8 @@ namespace Contacts {
             IContactsStorage storage;
             if (args.Length == 0) {
                 storage = new LocalContactsStorage();
+            } else if (args[0] == "--wcf") {
+                storage = new WcfContactsStorage();
             } else {
                 try {
                     storage = new RemoteContactsStorage(args[0]);
@@ -124,6 +126,8 @@ namespace Contacts {
                     Console.WriteLine($"Bad server. Terminating.");
                     return;
                 }
+            } else if (storage is WcfContactsStorage) {
+                Console.WriteLine($"Working with WCF contact storage.");
             } else {
                 Console.WriteLine("Working with local contact storage.");
             }

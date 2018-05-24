@@ -65,7 +65,7 @@
     <Compile Include="ContactsProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteContactsStorage.cs" />
-    <Compile Include="WCFContactsStorage.cs" />
+    <Compile Include="WcfContactsStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
