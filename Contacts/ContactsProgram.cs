@@ -60,7 +60,7 @@ namespace Contacts {
         private static void SearchByField(Contact.FieldKind fieldKind, IContactsStorage storage) {
             string query;
             if (fieldKind != Contact.FieldKind.Birthday) {
-                query = IO.ReadString(Contact.GetFieldKindName(fieldKind) + " substring:");
+                query = IO.ReadString(Contact.GetFieldKindName(fieldKind) + " substring: ");
             } else {
                 query = IO.ReadBirthday();
             }
@@ -91,11 +91,17 @@ namespace Contacts {
             return searchMenu;
         }
 
+
+
+
         public static void Main(string[] args) {
             IContactsStorage storage;
             if (args.Length == 0) {
                 storage = new LocalContactsStorage();
             } else if (args[0] == "--wcf" || args[0] == "/wcf") {
+                if (args.Length > 1) {
+                    Console.WriteLine("Note: WCF client configuration is done with App.config file. Ignoring arguments.");
+                }
                 storage = new WcfContactsStorage();
             } else {
                 try {
@@ -110,6 +116,7 @@ namespace Contacts {
                 }
             }
 
+
             Menu searchMenu = NewSearchMenu(storage);
             Menu mainMenu = NewMainMenu(searchMenu, storage);
 
@@ -119,15 +126,14 @@ namespace Contacts {
                 needsExit = IO.ReadBoolean(yesByDefault: false);
             }));
 
-            if (storage is WebApiContactsStorage remoteStorage) {
+
+            if (storage is RemoteContactsStorage remoteStorage) {
                 if (remoteStorage.IsGreetingSuccessful) {
                     Console.WriteLine($"Connected.");
                 } else {
                     Console.WriteLine($"Bad server. Terminating.");
                     return;
                 }
-            } else if (storage is WcfContactsStorage) {
-                Console.WriteLine($"Working with WCF contact storage.");
             } else {
                 Console.WriteLine("Working with local contact storage.");
             }

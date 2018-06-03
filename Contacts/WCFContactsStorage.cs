@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using Contacts.WcfServiceReference;
 
 namespace Contacts {
-    public class WcfContactsStorage : IRemoteContactsStorage, IDisposable {
+    public class WcfContactsStorage : RemoteContactsStorage, IDisposable {
         private ContactsWcfServiceClient client;
-
-        public bool IsGreetingSuccessful { get; private set; }
 
         public WcfContactsStorage() {
             client = new ContactsWcfServiceClient();
-            IsGreetingSuccessful = client.Greet();
+
+            Console.WriteLine($"Connecting to WCF remote storage at {client.Endpoint.ListenUri}");
+            IsGreetingSuccessful = WaitForTaskResult(client.GreetAsync()); ;
         }
 
-        public void AddContact(Contact newContact, out string message) {
+        public override void AddContact(Contact newContact, out string message) {
             try {
-                message = client.AddContact(newContact.ToContactData());
+                message = WaitForTaskResult(client.AddContactAsync(newContact.ToContactData()));
             }
             catch (Exception e) when (
                 e is FaultException ||
@@ -35,13 +36,14 @@ namespace Contacts {
             }
         }
 
-        public IReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
-            List<ContactData> contactDatas = client.FindBy((WcfServiceReference.ContactFieldKind)fieldKind, query);
+        public override IReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
+            
+            List<ContactData> contactDatas = WaitForTaskResult(client.FindByAsync((WcfServiceReference.ContactFieldKind)fieldKind, query)); ;
             return Contact.NewFromContactDataCollection(contactDatas);
         }
 
-        public IReadOnlyCollection<Contact> GetAllContacts() {
-            List<ContactData> contactDatas = client.GetAllContacts();
+        public override IReadOnlyCollection<Contact> GetAllContacts() {
+            List<ContactData> contactDatas = WaitForTaskResult(client.GetAllContactsAsync());
             return Contact.NewFromContactDataCollection(contactDatas);
         }
 

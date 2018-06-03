@@ -4,7 +4,7 @@ using Contacts;
 
 namespace Contacts.WcfService {
     public class ContactsWcfService : IContactsWcfService {
-        private LocalContactsStorage storage = new LocalContactsStorage();
+        private static LocalContactsStorage storage = new LocalContactsStorage();
 
         public string AddContact(ContactData incomingContactData) {
             storage.AddContact(incomingContactData.ToContact(), out string message);

@@ -33,20 +33,10 @@ namespace Contacts {
         }
 
         private bool DoHttpReqeust(Task<HttpResponseMessage> requestTask, out string response) {
-            int checks = 0;
-            int delay = 25;
-            while (!requestTask.IsCompleted) {
-                if (checks++ > 4) {
-                    Console.Write(".");
-                }
-                Thread.Sleep(delay += 25);
-            }
-            if (checks > 5) {
-                Console.WriteLine();
-            }
-
+            HttpResponseMessage httpResponse = WaitForTaskResult(requestTask);
+            
             try {
-                HttpResponseMessage httpResponse = requestTask.Result.EnsureSuccessStatusCode();
+                httpResponse.EnsureSuccessStatusCode();
 
                 Task<string> readTask = httpResponse.Content.ReadAsStringAsync();
                 while (!readTask.IsCompleted) {
@@ -76,7 +66,7 @@ namespace Contacts {
 
         }
 
-        public void AddContact(Contact newContact, out string message) {
+        public override void AddContact(Contact newContact, out string message) {
             HttpContent requestContent = new MultipartFormDataContent {
                 { new StringContent(newContact.ToVCard()), "contact" }
             };
@@ -88,7 +78,7 @@ namespace Contacts {
             }
         }
 
-        public IReadOnlyCollection<Contact> GetAllContacts() {
+        public override IReadOnlyCollection<Contact> GetAllContacts() {
             Console.WriteLine($"Getting all contacts from {BaseUri}");
             if (!DoHttpReqeust(httpClient.GetAsync(new Uri(BaseUri, "/api/getAllContacts")), out string response)) {
                 Console.WriteLine(response);
@@ -102,7 +92,7 @@ namespace Contacts {
             return new ReadOnlyCollection<Contact>(parsed);
         }
 
-        public IReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
+        public override IReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
             Console.WriteLine($"Searching contacts by {Contact.GetFieldKindName(fieldKind)} at {BaseUri}");
             if (!DoHttpReqeust(httpClient.GetAsync(new Uri(BaseUri, $"/api/findBy?field={fieldKind}&query={query}")), out string response)) {
                 Console.WriteLine(response);

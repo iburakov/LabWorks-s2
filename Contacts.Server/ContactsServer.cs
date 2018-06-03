@@ -44,7 +44,6 @@ namespace Contacts.Server {
             switch (context.Request.Url.AbsolutePath) {
                 case "/api/getAllContacts" when context.Request.HttpMethod == "GET": {
                     SetResponseWithString(Contact.ToVCardMany(storage.GetAllContacts()));
-                    Thread.Sleep(100000);
                 }
                 break;
                 case "/api/findBy" when context.Request.HttpMethod == "GET": {
