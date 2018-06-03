@@ -5,12 +5,15 @@ namespace Contacts.WcfService {
     [ServiceContract]
     public interface IContactsWcfService {
         [OperationContract]
-        IReadOnlyCollection<ContactData> GetAllContacts();
+        List<ContactData> GetAllContacts();
 
         [OperationContract]
-        IReadOnlyCollection<ContactData> FindBy(Contact.FieldKind fieldKind, string query);
+        List<ContactData> FindBy(Contact.FieldKind fieldKind, string query);
 
         [OperationContract]
         string AddContact(ContactData contact);
+
+        [OperationContract]
+        bool Greet();
     }
 }

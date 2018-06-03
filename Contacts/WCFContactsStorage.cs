@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ServiceModel;
 using Contacts.WcfServiceReference;
 
 namespace Contacts {
-    public class WcfContactsStorage : IContactsStorage, IDisposable {
-        private ContactsWcfServiceClient client = new ContactsWcfServiceClient();
+    public class WcfContactsStorage : IRemoteContactsStorage, IDisposable {
+        private ContactsWcfServiceClient client;
+
+        public bool IsGreetingSuccessful { get; private set; }
+
+        public WcfContactsStorage() {
+            client = new ContactsWcfServiceClient();
+            IsGreetingSuccessful = client.Greet();
+        }
 
         public void AddContact(Contact newContact, out string message) {
             try {
@@ -30,12 +36,12 @@ namespace Contacts {
         }
 
         public IReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
-            var contactDatas = client.FindBy((WcfServiceReference.ContactFieldKind)fieldKind, query) as ReadOnlyCollection<ContactData>;
+            List<ContactData> contactDatas = client.FindBy((WcfServiceReference.ContactFieldKind)fieldKind, query);
             return Contact.NewFromContactDataCollection(contactDatas);
         }
 
         public IReadOnlyCollection<Contact> GetAllContacts() {
-            var contactDatas = client.GetAllContacts() as ReadOnlyCollection<ContactData>;
+            List<ContactData> contactDatas = client.GetAllContacts();
             return Contact.NewFromContactDataCollection(contactDatas);
         }
 

@@ -95,11 +95,11 @@ namespace Contacts {
             IContactsStorage storage;
             if (args.Length == 0) {
                 storage = new LocalContactsStorage();
-            } else if (args[0] == "--wcf") {
+            } else if (args[0] == "--wcf" || args[0] == "/wcf") {
                 storage = new WcfContactsStorage();
             } else {
                 try {
-                    storage = new RemoteContactsStorage(args[0]);
+                    storage = new WebApiContactsStorage(args[0]);
                 }
                 catch (Exception e) when (
                     e is ArgumentException ||
@@ -119,7 +119,7 @@ namespace Contacts {
                 needsExit = IO.ReadBoolean(yesByDefault: false);
             }));
 
-            if (storage is RemoteContactsStorage remoteStorage) {
+            if (storage is WebApiContactsStorage remoteStorage) {
                 if (remoteStorage.IsGreetingSuccessful) {
                     Console.WriteLine($"Connected.");
                 } else {

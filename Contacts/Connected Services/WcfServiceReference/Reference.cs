@@ -13,38 +13,6 @@ namespace Contacts.WcfServiceReference {
     using System;
     
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Contact.FieldKind", Namespace="http://schemas.datacontract.org/2004/07/Contacts")]
-    public enum ContactFieldKind : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        FirstName = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        LastName = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        FullName = 2,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Nickname = 3,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Email = 4,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Mailer = 5,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Phone = 6,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Note = 7,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Birthday = 8,
-    }
-    
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ContactData", Namespace="http://schemas.datacontract.org/2004/07/Contacts.WcfService")]
@@ -202,31 +170,65 @@ namespace Contacts.WcfServiceReference {
         }
     }
     
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Contact.FieldKind", Namespace="http://schemas.datacontract.org/2004/07/Contacts")]
+    public enum ContactFieldKind : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        FirstName = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        LastName = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        FullName = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Nickname = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Email = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Mailer = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Phone = 6,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Note = 7,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Birthday = 8,
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="WcfServiceReference.IContactsWcfService")]
     public interface IContactsWcfService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContactsWcfService/GetAllContacts", ReplyAction="http://tempuri.org/IContactsWcfService/GetAllContactsResponse")]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Contacts.WcfServiceReference.ContactFieldKind))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Contacts.WcfServiceReference.ContactData))]
-        object GetAllContacts();
+        System.Collections.Generic.List<Contacts.WcfServiceReference.ContactData> GetAllContacts();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContactsWcfService/GetAllContacts", ReplyAction="http://tempuri.org/IContactsWcfService/GetAllContactsResponse")]
-        System.Threading.Tasks.Task<object> GetAllContactsAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.List<Contacts.WcfServiceReference.ContactData>> GetAllContactsAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContactsWcfService/FindBy", ReplyAction="http://tempuri.org/IContactsWcfService/FindByResponse")]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Contacts.WcfServiceReference.ContactFieldKind))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Contacts.WcfServiceReference.ContactData))]
-        object FindBy(Contacts.WcfServiceReference.ContactFieldKind fieldKind, string query);
+        System.Collections.Generic.List<Contacts.WcfServiceReference.ContactData> FindBy(Contacts.WcfServiceReference.ContactFieldKind fieldKind, string query);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContactsWcfService/FindBy", ReplyAction="http://tempuri.org/IContactsWcfService/FindByResponse")]
-        System.Threading.Tasks.Task<object> FindByAsync(Contacts.WcfServiceReference.ContactFieldKind fieldKind, string query);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<Contacts.WcfServiceReference.ContactData>> FindByAsync(Contacts.WcfServiceReference.ContactFieldKind fieldKind, string query);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContactsWcfService/AddContact", ReplyAction="http://tempuri.org/IContactsWcfService/AddContactResponse")]
         string AddContact(Contacts.WcfServiceReference.ContactData contact);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContactsWcfService/AddContact", ReplyAction="http://tempuri.org/IContactsWcfService/AddContactResponse")]
         System.Threading.Tasks.Task<string> AddContactAsync(Contacts.WcfServiceReference.ContactData contact);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContactsWcfService/Greet", ReplyAction="http://tempuri.org/IContactsWcfService/GreetResponse")]
+        bool Greet();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContactsWcfService/Greet", ReplyAction="http://tempuri.org/IContactsWcfService/GreetResponse")]
+        System.Threading.Tasks.Task<bool> GreetAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -256,19 +258,19 @@ namespace Contacts.WcfServiceReference {
                 base(binding, remoteAddress) {
         }
         
-        public object GetAllContacts() {
+        public System.Collections.Generic.List<Contacts.WcfServiceReference.ContactData> GetAllContacts() {
             return base.Channel.GetAllContacts();
         }
         
-        public System.Threading.Tasks.Task<object> GetAllContactsAsync() {
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<Contacts.WcfServiceReference.ContactData>> GetAllContactsAsync() {
             return base.Channel.GetAllContactsAsync();
         }
         
-        public object FindBy(Contacts.WcfServiceReference.ContactFieldKind fieldKind, string query) {
+        public System.Collections.Generic.List<Contacts.WcfServiceReference.ContactData> FindBy(Contacts.WcfServiceReference.ContactFieldKind fieldKind, string query) {
             return base.Channel.FindBy(fieldKind, query);
         }
         
-        public System.Threading.Tasks.Task<object> FindByAsync(Contacts.WcfServiceReference.ContactFieldKind fieldKind, string query) {
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<Contacts.WcfServiceReference.ContactData>> FindByAsync(Contacts.WcfServiceReference.ContactFieldKind fieldKind, string query) {
             return base.Channel.FindByAsync(fieldKind, query);
         }
         
@@ -278,6 +280,14 @@ namespace Contacts.WcfServiceReference {
         
         public System.Threading.Tasks.Task<string> AddContactAsync(Contacts.WcfServiceReference.ContactData contact) {
             return base.Channel.AddContactAsync(contact);
+        }
+        
+        public bool Greet() {
+            return base.Channel.Greet();
+        }
+        
+        public System.Threading.Tasks.Task<bool> GreetAsync() {
+            return base.Channel.GreetAsync();
         }
     }
 }

@@ -11,12 +11,16 @@ namespace Contacts.WcfService {
             return message;
         }
 
-        public IReadOnlyCollection<ContactData> FindBy(Contact.FieldKind fieldKind, string query) {
+        public List<ContactData> FindBy(Contact.FieldKind fieldKind, string query) {
             return ContactData.NewFromContactCollection(storage.FindByField(fieldKind, query));
         }
 
-        public IReadOnlyCollection<ContactData> GetAllContacts() {
+        public List<ContactData> GetAllContacts() {
             return ContactData.NewFromContactCollection(storage.GetAllContacts());
+        }
+
+        public bool Greet() {
+            return true;
         }
     }
 }
