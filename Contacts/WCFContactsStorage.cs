@@ -1,57 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
+using Contacts.WcfServiceReference;
 
 namespace Contacts {
-    public class WCFContactsStorage /*: IContactsStorage*/{
-    //    private void ProcessUsingWcfClient(Func<ContactsWcfServiceClient, string> action, out string message) {
-    //        var client = new ContactsWcfServiceClient();
-    //        try {
-    //            message = action.Invoke(client);
-    //            client.Close();
-    //        }
-    //        catch (Exception e) when (
-    //            e is FaultException ||
-    //            e is CommunicationException ||
-    //            e is TimeoutException
-    //        ) {
-    //            client.Abort();
-    //            message = $"An exception occurred: {e.Message}";
-    //        }
-    //    }
+    public class WcfContactsStorage : RemoteContactsStorage, IDisposable {
+        private ContactsWcfServiceClient client;
 
-    //    public void AddContact(Contact newContact, out string message) {
-    //        ProcessUsingWcfClient((client) => {
-    //            // TODO: reinvent the special contact class
-    //            var castedContact = new WcfService.Contact {
-    //                FirstName = newContact.FirstName,
-    //                LastName = newContact.LastName,
-    //                Mailer = newContact.Mailer,
-    //                Nickname = newContact.Nickname,
-    //                Note = newContact.Note,
-    //                Phone = newContact.Phone,
-    //                Email = newContact.Email
-    //            };
+        public WcfContactsStorage() {
+            client = new ContactsWcfServiceClient();
 
-    //            return client.AddContact(castedContact);
-    //        }, out message);
-    //    }
+            Console.WriteLine($"Connecting to WCF remote storage at {client.Endpoint.ListenUri}");
+            IsGreetingSuccessful = WaitForTaskResult(client.GreetAsync()); ;
+        }
 
-    //    public IReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
-    //        ReadOnlyCollection<Contact> r
-    //        ProcessUsingWcfClient((client) => {
-    //            client.FindBy((WcfService.Contact.FieldKind)fieldKind, query);
-    //            return 
+        public override void AddContact(Contact newContact, out string message) {
+            try {
+                message = WaitForTaskResult(client.AddContactAsync(newContact.ToContactData()));
+            }
+            catch (Exception e) when (
+                e is FaultException ||
+                e is CommunicationException ||
+                e is TimeoutException
+            ) {
+                message = $"An exception occurred: {e.Message}";
+            }
+        }
 
-    //        }, out string message);
-    //    }
+        public void Dispose() {
+            if (client.State == CommunicationState.Faulted) {
+                client.Abort();
+            } else {
+                client.Close();
+            }
+        }
 
-    //    public IReadOnlyCollection<Contact> GetAllContacts() {
-    //        throw new NotImplementedException();
-    //    }
+        public override IReadOnlyCollection<Contact> FindByField(Contact.FieldKind fieldKind, string query) {
+            
+            List<ContactData> contactDatas = WaitForTaskResult(client.FindByAsync((WcfServiceReference.ContactFieldKind)fieldKind, query)); ;
+            return Contact.NewFromContactDataCollection(contactDatas);
+        }
+
+        public override IReadOnlyCollection<Contact> GetAllContacts() {
+            List<ContactData> contactDatas = WaitForTaskResult(client.GetAllContactsAsync());
+            return Contact.NewFromContactDataCollection(contactDatas);
+        }
+
     }
 }

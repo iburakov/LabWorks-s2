@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Contacts.WcfService {
     public class ContactData {
@@ -41,13 +38,13 @@ namespace Contacts.WcfService {
             };
         }
 
-        public static IReadOnlyCollection<ContactData> NewFromContactCollection(IReadOnlyCollection<Contact> contactsReadOnly) {
+        public static List<ContactData> NewFromContactCollection(IReadOnlyCollection<Contact> contactsReadOnly) {
             var contacts = new List<Contact>(contactsReadOnly);
             var contactDatas = new List<ContactData>();
             foreach (var contact in contacts) {
                 contactDatas.Add(NewFromContact(contact));
             }
-            return contactDatas.AsReadOnly();
+            return contactDatas;
         }
     }
 }

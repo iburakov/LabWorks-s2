@@ -21,12 +21,6 @@ namespace Contacts.WcfService {
             ServiceHost selfHost = new ServiceHost(typeof(ContactsWcfService), baseUri);
 
             try {
-                selfHost.AddServiceEndpoint(typeof(IContactsWcfService), new WSHttpBinding(), relativeUriStr);
-                
-                selfHost.Description.Behaviors.Add(new ServiceMetadataBehavior {
-                    HttpGetEnabled = true
-                });
-
                 selfHost.Open();
                 Console.WriteLine($"Service is running at {baseUri}.");
                 Console.WriteLine("Press <ENTER> to terminate the service.");

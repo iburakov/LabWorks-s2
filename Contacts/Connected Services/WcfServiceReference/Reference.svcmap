@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="edb59523-60f3-4dbb-854b-55c0d8ed380f" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="044e6ed9-2c54-4b09-bd56-128842d3f443" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -24,12 +24,12 @@
     <MetadataSource Address="http://localhost:8080" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="item.xsd" MetadataType="Schema" ID="f65f0603-c036-403f-a31d-10f10249a9ca" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd2" />
-    <MetadataFile FileName="item.disco" MetadataType="Disco" ID="6358bbb5-da03-4d45-b27a-5eb23ba16968" SourceId="1" SourceUrl="http://localhost:8080/?disco" />
-    <MetadataFile FileName="ContactsWcfService.wsdl" MetadataType="Wsdl" ID="0d30609d-26f5-483a-aeb3-521a4c13836d" SourceId="1" SourceUrl="http://localhost:8080/?wsdl" />
-    <MetadataFile FileName="item1.xsd" MetadataType="Schema" ID="117474a0-77c2-4b31-b804-b02425242ede" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd1" />
-    <MetadataFile FileName="item2.xsd" MetadataType="Schema" ID="07b0a3ea-60fb-43db-bb91-deaa966ddf68" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd3" />
-    <MetadataFile FileName="item3.xsd" MetadataType="Schema" ID="06e009ba-b243-450e-a0e3-50b9dcbe64d8" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd0" />
+    <MetadataFile FileName="item.xsd" MetadataType="Schema" ID="20820fa4-44f8-4c70-b415-e57decbacfc1" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd2" />
+    <MetadataFile FileName="item.disco" MetadataType="Disco" ID="151a01e3-4d47-47b6-9523-d3546bb41695" SourceId="1" SourceUrl="http://localhost:8080/?disco" />
+    <MetadataFile FileName="ContactsWcfService.wsdl" MetadataType="Wsdl" ID="a1bc5076-ba61-466a-a910-0736bcf6328b" SourceId="1" SourceUrl="http://localhost:8080/?wsdl" />
+    <MetadataFile FileName="item1.xsd" MetadataType="Schema" ID="0f4d3ae8-b784-46fc-906a-7c9119d2b5c5" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd1" />
+    <MetadataFile FileName="item2.xsd" MetadataType="Schema" ID="875a36c8-3711-471a-872c-dd30fcbc59c1" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd3" />
+    <MetadataFile FileName="item3.xsd" MetadataType="Schema" ID="6d251292-4520-43ff-8c7c-7c27a7beb726" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd0" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
