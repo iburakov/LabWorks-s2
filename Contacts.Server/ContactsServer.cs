@@ -32,8 +32,7 @@ namespace Contacts.Server {
             var context = (HttpListenerContext)contextObject;
             context.Response.SendChunked = true;
 
-            Console.WriteLine($"[{DateTime.Now}] {context.Response.StatusCode} " +
-                $"{context.Request.HttpMethod} request to {context.Request.Url.AbsolutePath}");
+            Console.Write($"[{DateTime.Now}] {context.Request.HttpMethod} request to {context.Request.Url.AbsolutePath}... ");
 
             void SetResponseWithString(string response) {
                 var bytes = Encoding.UTF8.GetBytes(response);
@@ -72,6 +71,8 @@ namespace Contacts.Server {
                 }
                 break;
             }
+
+            Console.WriteLine($" [{DateTime.Now}] -> {context.Response.StatusCode} {(HttpStatusCode)context.Response.StatusCode}");
 
             context.Response.Close();
         }
