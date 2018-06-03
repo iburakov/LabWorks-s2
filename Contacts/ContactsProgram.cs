@@ -11,30 +11,15 @@ namespace Contacts {
             var mainMenu = new Menu("Menu:");
 
             mainMenu.AddItem(new MenuItem("View all contacts", () => {
-                try {
-                    IO.PrintContactList("All contacts", storage.GetAllContacts());
-                }
-                catch (AggregateException notFlattenedAe) {
-                    AggregateException ae = notFlattenedAe.Flatten();
-                    Console.WriteLine($"Couldn't fetch contacts: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
-                }
+                IO.PrintContactList("All contacts", storage.GetAllContacts());
             }));
 
             mainMenu.AddItem(new MenuItem("Search", searchMenu.Invoke));
 
             mainMenu.AddItem(new MenuItem("New contact", () => {
                 var newContact = IO.ReadContact();
-                try {
-                    storage.AddContact(newContact, out string message);
-                    Console.WriteLine(message);
-                }
-                catch (AggregateException notFlattenedAe) {
-                    AggregateException ae = notFlattenedAe.Flatten();
-                    Console.WriteLine($"Couldn't add {newContact.FullName} to contacts: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
-                }
-                catch (HttpRequestException e) {
-                    Console.WriteLine($"Couldn't add {newContact.FullName} to contacts: {e.Message}");
-                }
+                storage.AddContact(newContact, out string message);
+                Console.WriteLine(message);
             }));
 
             mainMenu.AddItem(new MenuItem("Load contacts from VCard", () => {
@@ -54,27 +39,20 @@ namespace Contacts {
         }
 
 
-        private delegate List<Contact> ContactsFinder(string substring);
         private const string searchResultsHeader = "Search results";
 
         private static void SearchByField(Contact.FieldKind fieldKind, IContactsStorage storage) {
             string query;
             if (fieldKind != Contact.FieldKind.Birthday) {
-                query = IO.ReadString(Contact.GetFieldKindName(fieldKind) + " substring:");
+                query = IO.ReadString(Contact.GetFieldKindName(fieldKind) + " substring: ");
             } else {
                 query = IO.ReadBirthday();
             }
 
-            try {
-                IO.PrintContactList(
-                    searchResultsHeader,
-                    storage.FindByField(fieldKind, query)
-                );
-            }
-            catch (AggregateException notFlattenedAe) {
-                AggregateException ae = notFlattenedAe.Flatten();
-                Console.WriteLine($"Couldn't fetch contacts: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
-            }
+            IO.PrintContactList(
+                searchResultsHeader,
+                storage.FindByField(fieldKind, query)
+            );
         }
 
         private static Menu NewSearchMenu(IContactsStorage storage) {
@@ -91,13 +69,29 @@ namespace Contacts {
             return searchMenu;
         }
 
+
+
+
         public static void Main(string[] args) {
             IContactsStorage storage;
             if (args.Length == 0) {
                 storage = new LocalContactsStorage();
+            } else if (args[0] == "--wcf" || args[0] == "/wcf") {
+                if (args.Length > 1) {
+                    Console.WriteLine("Note: WCF client configuration is done with App.config file. Ignoring arguments.");
+                }
+                try {
+                    storage = new WcfContactsStorage();
+                }
+                catch (AggregateException notFlattenedAe) {
+                    AggregateException ae = notFlattenedAe.Flatten();
+                    Console.WriteLine($"Could not connect to server!\n\n" +
+                        $"Technical details: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
+                    return;
+                }
             } else {
                 try {
-                    storage = new RemoteContactsStorage(args[0]);
+                    storage = new WebApiContactsStorage(args[0]);
                 }
                 catch (Exception e) when (
                     e is ArgumentException ||
@@ -108,6 +102,7 @@ namespace Contacts {
                 }
             }
 
+
             Menu searchMenu = NewSearchMenu(storage);
             Menu mainMenu = NewMainMenu(searchMenu, storage);
 
@@ -116,6 +111,7 @@ namespace Contacts {
                 Console.WriteLine("Are you sure?");
                 needsExit = IO.ReadBoolean(yesByDefault: false);
             }));
+
 
             if (storage is RemoteContactsStorage remoteStorage) {
                 if (remoteStorage.IsGreetingSuccessful) {
@@ -136,6 +132,14 @@ namespace Contacts {
                 catch (UserRefusedException) {
                     continue;
                 }
+                catch (AggregateException notFlattenedAe) {
+                    AggregateException ae = notFlattenedAe.Flatten();
+                    Console.WriteLine($"An exception occurred: {ae.InnerExceptions[ae.InnerExceptions.Count - 1].Message}");
+                }
+                catch (HttpRequestException e) {
+                    Console.WriteLine($"An exception occurred: {e.Message}");
+                }
+
             }
 
         }
