@@ -22,7 +22,7 @@ namespace Contacts.WcfService {
 
             try {
                 selfHost.AddServiceEndpoint(typeof(IContactsWcfService), new WSHttpBinding(), relativeUriStr);
-                
+
                 selfHost.Description.Behaviors.Add(new ServiceMetadataBehavior {
                     HttpGetEnabled = true
                 });
