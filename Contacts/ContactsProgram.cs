@@ -142,6 +142,10 @@ namespace Contacts {
 
             }
 
+            if (storage is WcfContactsStorage wcfContactsStorage) {
+                wcfContactsStorage.Dispose();
+            }
+
         }
 
     }

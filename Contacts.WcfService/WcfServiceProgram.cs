@@ -8,9 +8,8 @@ namespace Contacts.WcfService {
     public sealed class WcfServiceProgram {
         public static void Main(string[] args) {
             string baseUriStr = ConfigurationManager.ConnectionStrings["baseUri"]?.ConnectionString;
-            string relativeUriStr = ConfigurationManager.ConnectionStrings["serviceRelativeUri"]?.ConnectionString;
 
-            if (baseUriStr is null || relativeUriStr is null ||
+            if (baseUriStr is null || 
                 !IO.TryParseUri(baseUriStr, out Uri baseUri) ||
                 baseUri.Scheme != "http") {
 
