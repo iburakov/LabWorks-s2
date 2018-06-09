@@ -16,16 +16,20 @@ namespace Contacts {
         private const short MaxMailerLength = 50;
         private const short MaxNoteLength = 500;
 
-        public Contact(string firstName, string lastName, string nickname, string phone,
-               string email, string mailer, string note, string birthday) {
-            FirstName = firstName;
-            LastName = lastName;
-            Nickname = nickname;
-            Phone = phone;
-            Email = email;
-            Mailer = mailer;
-            Note = note;
-            Birthday = birthday;
+        public override bool Equals(object obj) {
+            if (obj is Contact another) {
+                return
+                    FirstName == another.FirstName &&
+                    LastName == another.LastName &&
+                    Nickname == another.Nickname &&
+                    Phone == another.Phone &&
+                    Email == another.Email &&
+                    Mailer == another.Mailer &&
+                    Note == another.Note &&
+                    Birthday == another.Birthday;
+            } else {
+                return false;
+            }
         }
 
         public delegate bool FieldValidator<T>(T value, out string errorMessage);
@@ -214,7 +218,11 @@ namespace Contacts {
             }
 
             try {
-                DateTime.Parse(value);
+                var parsedDate = DateTime.Parse(value);
+                if (parsedDate.Year == 1) {
+                    errorMessage = "A contact must have a birthday";
+                    return false;
+                };
                 errorMessage = "";
                 return true;
             } catch (FormatException e) {
@@ -225,6 +233,18 @@ namespace Contacts {
 
         public override string ToString() {
             return $"{FirstName} {nickname} {LastName}, born {Birthday}, tel: {Phone}, email({Mailer}): {Email} - {Note}";
+        }
+
+        public bool IsValid() {
+            return 
+                firstName != null && IsFirstNameValid(firstName, out string errorMessage) &&
+                lastName != null && IsLastNameValid(lastName, out errorMessage) &&
+                nickname != null && IsNicknameValid(nickname, out errorMessage) &&
+                email != null && IsEmailValid(email, out errorMessage) &&
+                phone != null && IsPhoneValid(phone, out errorMessage) &&
+                mailer != null && IsMailerValid(mailer, out errorMessage) &&
+                note != null && IsNoteValid(note, out errorMessage) &&
+                birthday != null && IsBirthdayValid(birthday.ToShortDateString(), out errorMessage);
         }
 
         public static string ToVCardMany(IReadOnlyCollection<Contact> contacts) {
@@ -255,16 +275,16 @@ END:VCARD
             var telephones = new List<Telephone>(vcard.Telephones);
             var emails = new List<Email>(vcard.Emails);
 
-            return new Contact(
-                firstName: vcard.FirstName,
-                lastName: vcard.LastName,
-                nickname: vcard.NickName,
-                phone: telephones[0].Number,
-                email: emails[0].EmailAddress,
-                mailer: vcard.Mailer,
-                note: vcard.Note,
-                birthday: vcard.BirthDay?.ToShortDateString()
-            );
+            return new Contact {
+                FirstName = vcard.FirstName,
+                LastName = vcard.LastName,
+                Nickname = vcard.NickName,
+                Phone = telephones[0].Number,
+                Email = emails[0].EmailAddress,
+                Mailer = vcard.Mailer,
+                Note = vcard.Note,
+                Birthday = vcard.BirthDay?.ToShortDateString()
+            };
         }
 
         public static List<Contact> ParseMany(string vcards, out int parsedCounter, out int totalCounter) {
@@ -281,16 +301,16 @@ END:VCARD
                     var telephones = new List<Telephone>(vcard.Telephones);
                     var emails = new List<Email>(vcard.Emails);
 
-                    parsedContacts.Add(new Contact(
-                        firstName: vcard.FirstName,
-                        lastName: vcard.LastName,
-                        nickname: vcard.NickName,
-                        phone: telephones[0].Number,
-                        email: emails[0].EmailAddress,
-                        mailer: vcard.Mailer,
-                        note: vcard.Note,
-                        birthday: vcard.BirthDay?.ToShortDateString()
-                    ));
+                    parsedContacts.Add(new Contact {
+                        FirstName = vcard.FirstName,
+                        LastName = vcard.LastName,
+                        Nickname = vcard.NickName,
+                        Phone = telephones[0].Number,
+                        Email = emails[0].EmailAddress,
+                        Mailer = vcard.Mailer,
+                        Note = vcard.Note,
+                        Birthday = vcard.BirthDay?.ToShortDateString()
+                    });
 
                     // flow gets here only if no exceptions occurred 
                     ++parsedCounter;
@@ -321,16 +341,16 @@ END:VCARD
         }
 
         public static Contact NewFromContactData(ContactData contactData) {
-            return new Contact(
-                firstName: contactData.firstName,
-                lastName: contactData.lastName,
-                nickname: contactData.nickname,
-                phone: contactData.phone,
-                email: contactData.email,
-                mailer: contactData.mailer,
-                note: contactData.note,
-                birthday: contactData.birthday.ToShortDateString()
-            );
+            return new Contact {
+                FirstName = contactData.firstName,
+                LastName = contactData.lastName,
+                Nickname = contactData.nickname,
+                Phone = contactData.phone,
+                Email = contactData.email,
+                Mailer = contactData.mailer,
+                Note = contactData.note,
+                Birthday = contactData.birthday.ToShortDateString()
+            };
         }
 
         public static IReadOnlyCollection<Contact> NewFromContactDataCollection(IReadOnlyCollection<ContactData> contactDatasReadOnly) {

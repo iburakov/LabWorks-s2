@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
@@ -74,17 +75,17 @@
     <None Include="Connected Services\WcfServiceReference\Contacts.WcfServiceReference.ContactData.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\WcfServiceReference\ContactsWcfService.wsdl" />
-    <None Include="Connected Services\WcfServiceReference\item.xsd">
+    <None Include="Connected Services\WcfServiceReference\ContactsWcfService1.wsdl" />
+    <None Include="Connected Services\WcfServiceReference\item4.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\WcfServiceReference\item1.xsd">
+    <None Include="Connected Services\WcfServiceReference\item41.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\WcfServiceReference\item2.xsd">
+    <None Include="Connected Services\WcfServiceReference\item42.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\WcfServiceReference\item3.xsd">
+    <None Include="Connected Services\WcfServiceReference\item43.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
@@ -94,9 +95,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\WcfServiceReference\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\WcfServiceReference\item.disco" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\WcfServiceReference\configuration91.svcinfo" />
@@ -109,6 +107,9 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\WcfServiceReference\item1.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -28,16 +28,16 @@ namespace Contacts.CommandLine {
         }
 
         public static Contact ReadContact() {
-            return new Contact(
-                firstName: ReadFirstName(),
-                lastName: ReadLastName(),
-                nickname: ReadNickname(),
-                phone: ReadPhone(),
-                email: ReadEmail(),
-                mailer: ReadMailer(),
-                note: ReadNote(),
-                birthday: ReadBirthday()
-            );
+            return new Contact {
+                FirstName = ReadFirstName(),
+                LastName = ReadLastName(),
+                Nickname = ReadNickname(),
+                Phone = ReadPhone(),
+                Email = ReadEmail(),
+                Mailer = ReadMailer(),
+                Note = ReadNote(),
+                Birthday = ReadBirthday()
+            };
         }
 
         public static bool TryParseUri(string uriString, out Uri result) {

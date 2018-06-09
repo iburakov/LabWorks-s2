@@ -24,12 +24,12 @@
     <MetadataSource Address="http://localhost:8080" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="item.xsd" MetadataType="Schema" ID="20820fa4-44f8-4c70-b415-e57decbacfc1" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd2" />
-    <MetadataFile FileName="item.disco" MetadataType="Disco" ID="151a01e3-4d47-47b6-9523-d3546bb41695" SourceId="1" SourceUrl="http://localhost:8080/?disco" />
-    <MetadataFile FileName="ContactsWcfService.wsdl" MetadataType="Wsdl" ID="a1bc5076-ba61-466a-a910-0736bcf6328b" SourceId="1" SourceUrl="http://localhost:8080/?wsdl" />
-    <MetadataFile FileName="item1.xsd" MetadataType="Schema" ID="0f4d3ae8-b784-46fc-906a-7c9119d2b5c5" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd1" />
-    <MetadataFile FileName="item2.xsd" MetadataType="Schema" ID="875a36c8-3711-471a-872c-dd30fcbc59c1" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd3" />
-    <MetadataFile FileName="item3.xsd" MetadataType="Schema" ID="6d251292-4520-43ff-8c7c-7c27a7beb726" SourceId="1" SourceUrl="http://localhost:8080/?xsd=xsd0" />
+    <MetadataFile FileName="item4.xsd" MetadataType="Schema" ID="9803cf5c-044a-4e0e-be47-0078a14f0dd9" SourceId="1" SourceUrl="http://contacts.ifmo.ru:8080/?xsd=xsd0" />
+    <MetadataFile FileName="item41.xsd" MetadataType="Schema" ID="03606761-444c-4ae3-b7eb-f0c9684b52ee" SourceId="1" SourceUrl="http://contacts.ifmo.ru:8080/?xsd=xsd1" />
+    <MetadataFile FileName="ContactsWcfService1.wsdl" MetadataType="Wsdl" ID="bb738d67-53a0-45c6-bdfd-c9f6f481425e" SourceId="1" SourceUrl="http://contacts.ifmo.ru:8080/?wsdl" />
+    <MetadataFile FileName="item1.disco" MetadataType="Disco" ID="07dcdd39-d60d-444e-b5a6-f62f558ec317" SourceId="1" SourceUrl="http://contacts.ifmo.ru:8080/?disco" />
+    <MetadataFile FileName="item42.xsd" MetadataType="Schema" ID="c8ceafad-51db-47a0-9f6b-b347c4164531" SourceId="1" SourceUrl="http://contacts.ifmo.ru:8080/?xsd=xsd2" />
+    <MetadataFile FileName="item43.xsd" MetadataType="Schema" ID="7a1a5174-dc59-497b-9b06-71e4183ec663" SourceId="1" SourceUrl="http://contacts.ifmo.ru:8080/?xsd=xsd3" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

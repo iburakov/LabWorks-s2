@@ -6,18 +6,23 @@ using System.Threading.Tasks;
 namespace Contacts {
     public abstract class RemoteContactsStorage : IContactsStorage {
         public bool IsGreetingSuccessful { get; protected set; }
+        protected bool isCommandLineInterface;
 
         protected T WaitForTaskResult<T>(Task<T> task) {
             int checks = 0;
             int delay = 25;
             while (!task.IsCompleted) {
                 if (checks++ > 4) {
-                    Console.Write(".");
+                    if (isCommandLineInterface) {
+                        Console.Write(".");
+                    }
                 }
                 Thread.Sleep(delay += 25);
             }
             if (checks > 5) {
-                Console.WriteLine();
+                if (isCommandLineInterface) {
+                    Console.WriteLine();
+                }
             }
 
             return task.Result;

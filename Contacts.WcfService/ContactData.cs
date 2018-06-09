@@ -13,16 +13,16 @@ namespace Contacts.WcfService {
         public DateTime birthday;
 
         public Contact ToContact() {
-            return new Contact(
-                firstName: firstName,
-                lastName: lastName,
-                nickname: nickname,
-                phone: phone,
-                email: email,
-                mailer: mailer,
-                note: note,
-                birthday: birthday.ToShortDateString()
-            );
+            return new Contact {
+                FirstName = firstName,
+                LastName = lastName,
+                Nickname = nickname,
+                Phone = phone,
+                Email = email,
+                Mailer = mailer,
+                Note = note,
+                Birthday = birthday.ToShortDateString()
+            };
         }
 
         public static ContactData NewFromContact(Contact contact) {

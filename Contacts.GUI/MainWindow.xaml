@@ -4,25 +4,57 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Contacts.GUI"
+        xmlns:localContacts="clr-namespace:Contacts;assembly=Contacts"
         mc:Ignorable="d"
-        Title="Contacts GUI" Height="442" Width="804" MinHeight="300" MinWidth="400">
+        Title="Contacts GUI" Height="400" Width="800" MinHeight="400" MinWidth="700">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="40*"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="60*"/>
+            <ColumnDefinition Width="60*" MinWidth="200" />
         </Grid.ColumnDefinitions>
 
-        <DataGrid Name="ContactsListBox" BorderThickness="0"/>
-        <GridSplitter VerticalAlignment="Stretch" Width="5" Grid.Column="1" ResizeBehavior="PreviousAndNext" Background="#FFBCBCBC"/>
-        <Grid Grid.Column="2" Margin="10" Name="DetailsGrid">
+        <Grid.Resources>
+            <local:ConnectWindow x:Key="ConnectWindow" />
+            <DataTemplate DataType="{x:Type localContacts:Contact}">
+                <DataTemplate.Resources>
+                    <Style x:Key="Name" TargetType="TextBlock">
+                        <Setter Property="FontWeight" Value="Bold" />
+                        <Setter Property="Margin" Value="3 0"/>
+                    </Style>
+
+                    <Style x:Key="Info" TargetType="TextBlock">
+                        <Setter Property="Margin" Value="3 1"/>
+                    </Style>
+                </DataTemplate.Resources>
+
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Path=FirstName}" Style="{StaticResource Name}" />
+                        <TextBlock Text="{Binding Path=Nickname}" Style="{StaticResource Name}" />
+                        <TextBlock Text="{Binding Path=LastName}" Style="{StaticResource Name}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Path=Birthday}" Style="{StaticResource Info}"/>
+                        <TextBlock Text="{Binding Path=Email}" Style="{StaticResource Info}"/>
+                        <TextBlock Text="{Binding Path=Phone}" Style="{StaticResource Info}"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding Path=Note}" Style="{StaticResource Info}" />
+                    <Separator />
+                </StackPanel>
+            </DataTemplate>
+        </Grid.Resources>
+
+        <ProgressBar Name="ProgressBar" Height="5" Grid.ColumnSpan="3" BorderThickness="0" Minimum="0" Maximum="100"/>
+
+        <ListBox Grid.Row="1" Name="ContactsListBox" BorderThickness="0" SelectionChanged="ContactsListBox_SelectionChanged"/>
+        <GridSplitter Grid.Row="1" VerticalAlignment="Stretch" Width="5" Grid.Column="1" ResizeBehavior="PreviousAndNext" Background="#FFBCBCBC"/>
+        <Grid Grid.Row="1" Grid.Column="2" Margin="10" Name="DetailsGrid">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -42,15 +74,12 @@
                 </Style>
             </Grid.Resources>
 
-            <Label Content="First Name:" Grid.Row="0" Style="{StaticResource LabelStyle}"/>
-            <TextBox Grid.Row="0" Style="{StaticResource TextBoxStyle}" />
 
-            <Label Content="Last Name:" Grid.Row="1" Style="{StaticResource LabelStyle}"/>
-            <TextBox Grid.Row="1" Style="{StaticResource TextBoxStyle}" />
-
-            <Label Content="Phone:" Grid.Row="2" Style="{StaticResource LabelStyle}" />
-            <TextBox Grid.Row="2" Style="{StaticResource TextBoxStyle}" />
-
+            <StackPanel Name="ButtonsPanel" Orientation="Horizontal" Grid.ColumnSpan="2" VerticalAlignment="Bottom" FlowDirection="RightToLeft">
+                <Button Content="Submit" IsDefault="True" Padding="5" Margin="10" Name="SubmitButton" IsEnabled="False" Click="SubmitButton_Click" />
+                <Button Content="Create a new contact" Padding="5" Margin="10" Name="CreateNewContactButton" Click="CreateNewContactButton_Click" />
+            </StackPanel>
+            
         </Grid>
 
 
